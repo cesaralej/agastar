@@ -16,8 +16,12 @@ import { AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 const AuthPage = () => {
   const router = useRouter();
 
-  const [createUserWithEmailAndPassword, createUserLoading, createUserError] =
-    useCreateUserWithEmailAndPassword(auth);
+  const [
+    createUserWithEmailAndPassword,
+    registeredUser,
+    createUserLoading,
+    createUserError,
+  ] = useCreateUserWithEmailAndPassword(auth);
   const [signInWithEmailAndPassword, user, loading, error] =
     useSignInWithEmailAndPassword(auth);
   const [signInWithGoogle, googleUser, googleLoading, googleError] =
@@ -30,20 +34,26 @@ const AuthPage = () => {
   const [passwordError, setPasswordError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (user || googleUser) {
+    if (user || googleUser || registeredUser) {
       router.push("/main/dashboard"); // Redirect to home if user is already logged in
     }
-  }, [user, googleUser, router]);
+  }, [user, googleUser, router, registeredUser]);
 
-  const handleLogin = async (e) => {
+  interface LoginError {
+    code: string;
+    message: string;
+  }
+
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
       await signInWithEmailAndPassword(email, password);
       if (error) {
+        const loginError = error as LoginError;
         console.log(
           "createUserWithEmailAndPassword error:",
-          error.code,
-          error.message
+          loginError.code,
+          loginError.message
         );
         // Handle specific errors here (e.g., check error.code)
       } else {
@@ -52,8 +62,6 @@ const AuthPage = () => {
       }
     } catch (error) {
       if (error instanceof Error) {
-        console.log(error.message);
-      } else {
         console.log("An unknown error occurred");
       }
     }
@@ -79,7 +87,9 @@ const AuthPage = () => {
         }
       })
       .catch((error: AuthError) => {
-        console.log(error.message);
+        if (error instanceof Error) {
+          console.log("An unknown error occurred");
+        }
       });
 
     setPassword(""); // Clear password after successful signup
@@ -91,7 +101,9 @@ const AuthPage = () => {
       await signInWithGoogle();
       router.push("/dashboard"); // Redirect to home programmatically after success
     } catch (error) {
-      console.log(error.message);
+      if (error instanceof Error) {
+        console.log("An unknown error occurred");
+      }
     }
   };
 
@@ -147,7 +159,7 @@ const AuthPage = () => {
           )}
           <button
             type="submit"
-            disabled={loading || createUserLoading} // Disable button during loading
+            disabled={loading || createUserLoading}
             className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 rounded-md focus:outline-none focus:ring focus:ring-blue-300 disabled:bg-gray-400"
           >
             {isSignup ? "Sign Up" : "Sign In"}
