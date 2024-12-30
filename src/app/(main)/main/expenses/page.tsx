@@ -31,14 +31,15 @@ const ExpensesPage = () => {
       </div>
 
       {showForm && <TransactionForm onSubmit={addTransaction} />}
+
       {loading ? (
         <Spinner loading={loading} />
       ) : (
         <TransactionList
-          transactions={transactions}
+          transactions={transactions || []}
           onEdit={updateTransaction}
           onDelete={deleteTransaction}
-          error={error}
+          error={error ? { message: error.message } : undefined}
         />
       )}
     </>

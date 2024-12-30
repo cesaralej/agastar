@@ -5,6 +5,7 @@ import { FaCreditCard, FaWallet, FaCoins } from "react-icons/fa";
 import { useToast } from "@/hooks/use-toast";
 
 import { Transaction } from "../types";
+import { TransactionData } from "../types";
 
 type CategoryKey = keyof typeof categories;
 
@@ -14,14 +15,17 @@ const TransactionItem = ({
   onDelete,
 }: {
   transaction: Transaction;
-  onEdit: (id: string) => void;
+  onEdit: (
+    id: string,
+    updatedTransactionData: Partial<TransactionData>
+  ) => void;
   onDelete: (id: string) => Promise<void>;
 }) => {
   const [isHovering, setIsHovering] = useState(false);
   const { toast } = useToast();
 
   const onEditClick = () => {
-    onEdit(transaction.id);
+    onEdit(transaction.id, {});
   };
 
   const handleDelete = async () => {
