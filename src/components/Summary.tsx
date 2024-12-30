@@ -7,9 +7,9 @@ import {
   FaWallet,
   FaCreditCard,
 } from "react-icons/fa";
-import PropTypes from "prop-types";
+import { Transaction } from "../types";
 
-const Summary = ({ transactions }) => {
+const Summary = ({ transactions }: { transactions: Transaction[] }) => {
   const [summary, setSummary] = useState({
     totalIncome: 0,
     totalExpenses: 0,
@@ -22,26 +22,34 @@ const Summary = ({ transactions }) => {
     () => {
       if (!transactions) return;
 
-      let income = 0;
-      let expenses = 0;
-      let savings = 0;
-      let credit = 0;
+      let income: number = 0;
+      let expenses: number = 0;
+      let savings: number = 0;
+      let credit: number = 0;
 
-      transactions.forEach((transaction) => {
-        const amount = parseFloat(transaction.amount);
+      transactions.forEach((transaction: Transaction) => {
+        const amount: number = transaction.amount;
 
-        if (!transaction.isCreditCardPayment) {
-          transaction.type === "income"
-            ? (income += amount)
-            : (expenses += amount);
-          transaction.account === "savings"
-            ? transaction.type === "income"
-              ? (savings += amount)
-              : (savings -= amount)
-            : (credit += amount);
-        } else {
+        if (transaction.isCreditCardPayment) {
+          // Handle credit card payments
           credit -= amount;
           savings -= amount;
+          return; // Skip further checks for this transaction
+        }
+
+        // If the transaction is savings then add the amount to the savings or else add it to the credit
+        if (transaction.account === "savings") {
+          // If the transaction is income then add the amount to the savings or else subtract it
+          if (transaction.type === "income") {
+            savings += amount;
+            income += amount;
+          } else {
+            savings -= amount;
+            expenses += amount;
+          }
+        } else {
+          credit += amount;
+          expenses += amount;
         }
       });
 
@@ -133,11 +141,6 @@ const Summary = ({ transactions }) => {
       </div>
     </div>
   );
-};
-Summary.propTypes = {
-  transactions: PropTypes.array.isRequired,
-  loading: PropTypes.bool,
-  error: PropTypes.string,
 };
 
 export default Summary;

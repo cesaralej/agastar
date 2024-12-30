@@ -10,7 +10,7 @@ import {
   deleteDoc,
   FirestoreError,
 } from "firebase/firestore";
-import { auth, db } from "../firebase/firebase";
+import { auth, db } from "../lib/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Transaction, TransactionData } from "../types";

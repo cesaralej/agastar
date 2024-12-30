@@ -1,7 +1,8 @@
+"Use client";
 import { useEffect, useRef } from "react";
-import { auth } from "../firebase/firebase";
+import { auth } from "../lib/firebase";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { useRouter } from "next/navigation";
 
 // Hay algo de estos props que no me cuadra. Lo de que display name y email sean null
 interface UserMenuProps {
@@ -19,7 +20,7 @@ const UserMenu = ({ isDropdownOpen, toggleDropdown, user }: UserMenuProps) => {
 
   const handleSignOut = async () => {
     try {
-      await auth.signOut().then(() => router.push(`/login`));
+      await auth.signOut().then(() => router.push(`/auth`));
       toggleDropdown();
     } catch (error) {
       console.error("Error signing out:", error);
@@ -85,7 +86,7 @@ const UserMenu = ({ isDropdownOpen, toggleDropdown, user }: UserMenuProps) => {
           <ul className="py-2">
             <li>
               <Link
-                href="/"
+                href="/main/dashboard"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white"
                 onClick={handleLinkClick}
               >
@@ -94,7 +95,7 @@ const UserMenu = ({ isDropdownOpen, toggleDropdown, user }: UserMenuProps) => {
             </li>
             <li>
               <Link
-                href="/settings"
+                href="/main/settings"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white"
                 onClick={handleLinkClick}
               >

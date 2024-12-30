@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../firebase/firebase";
+import { auth } from "../lib/firebase";
 import UserMenu from "./UserMenu";
 import NavbarLinks from "./NavbarLinks";
 import MobileMenuToggle from "./MobileMenuToggle";
@@ -20,12 +20,14 @@ const Navbar = () => {
     <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-md">
       <div className="max-w-screen-xl mx-auto p-4 flex justify-between items-center">
         {/* Logo and Brand */}
-        <div className="flex items-center space-x-3">
-          <FaShuttleSpace className="h-8 w-8 text-purple-600 transform rotate-[-50deg]" />
-          <span className="text-2xl font-semibold text-gray-900 dark:text-white">
-            AGASTAR
-          </span>
-        </div>
+        <Link href="/">
+          <div className="flex items-center space-x-3">
+            <FaShuttleSpace className="h-8 w-8 text-purple-600 transform rotate-[-50deg]" />
+            <span className="text-2xl font-semibold text-gray-900 dark:text-white">
+              AGASTAR
+            </span>
+          </div>
+        </Link>
         {/* Navbar Links for Desktop */}
         {user && <NavbarLinks />}
         {/* User Menu / Sign In Button */}
@@ -41,7 +43,7 @@ const Navbar = () => {
               user={user} // Pass the user prop
             />
           ) : (
-            <Link href="/login" className="text-blue-500 hover:text-blue-700">
+            <Link href="/auth" className="text-blue-500 hover:text-blue-700">
               Sign In
             </Link>
           )}

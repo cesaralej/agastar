@@ -1,6 +1,6 @@
 export interface TransactionData {
-  amount: number;
-  date: Date | null;
+  amount: string;
+  date: string;
   time: string;
   description: string;
   category: string;

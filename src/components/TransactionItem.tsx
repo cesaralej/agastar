@@ -1,10 +1,12 @@
 import { useState } from "react";
-import categories from "../data/categories.jsx";
+import categories from "@/data/categories";
 import { HiPlusSm, HiMinusSm, HiPencil, HiTrash } from "react-icons/hi";
 import { FaCreditCard, FaWallet, FaCoins } from "react-icons/fa";
 import { useToast } from "@/hooks/use-toast";
 
 import { Transaction } from "../types";
+
+type CategoryKey = keyof typeof categories;
 
 const TransactionItem = ({
   transaction,
@@ -17,6 +19,10 @@ const TransactionItem = ({
 }) => {
   const [isHovering, setIsHovering] = useState(false);
   const { toast } = useToast();
+
+  const onEditClick = () => {
+    onEdit(transaction.id);
+  };
 
   const handleDelete = async () => {
     try {
@@ -32,17 +38,24 @@ const TransactionItem = ({
     }
   };
 
-  const truncateText = (text, limit) => {
+  const truncateText = ({
+    text,
+    limit,
+  }: {
+    text: string;
+    limit: number;
+  }): string => {
     if (text.length > limit) {
       return text.substring(0, limit) + "...";
     }
     return text;
   };
 
-  const category = categories[transaction.category];
+  const category = categories[transaction.category as CategoryKey];
+
   //These placeholders dont work because it breaks when no category is found
-  const categoryIcon = category.icon || <FaCoins />;
-  const categoryColor = category.color || "bg-gray-50"; // Default light gray
+  const categoryIcon = category?.icon || <FaCoins />;
+  const categoryColor = category?.color || "bg-gray-50"; // Default light gray
 
   const accountIcon =
     transaction.account === "savings" ? <FaWallet /> : <FaCreditCard />;
@@ -51,9 +64,9 @@ const TransactionItem = ({
     transaction.type === "income" ? "text-green-500" : "text-red-500"; // Conditional amount color
   const cardStyle =
     transaction.type === "income"
-      ? `bg-green-50/10 border-green-500/30 border-2 hover:bg-green-50`
+      ? `bg-white border-green-500/30 border-2 hover:bg-green-50`
       : transaction.isCreditCardPayment
-      ? `bg-purple-50/10 border-purple-500/30 border-2 hover:bg-purple-50`
+      ? `bg-white border-purple-500/30 border-2 hover:bg-purple-50`
       : `bg-white hover:bg-gray-50 hover:border-gray-300`;
 
   return (
@@ -72,7 +85,7 @@ const TransactionItem = ({
           <div className="flex justify-between items-start">
             <div>
               <span className="text-lg font-semibold block">
-                {truncateText(transaction.description, 20)}
+                {truncateText({ text: transaction.description, limit: 20 })}
               </span>{" "}
               <div className="flex items-center gap-2 text-sm text-gray-600">
                 {accountIcon}
@@ -100,6 +113,7 @@ const TransactionItem = ({
                   <div className="flex gap-1 absolute top-0 right-0 p-1 rounded-md">
                     <button
                       disabled
+                      onClick={onEditClick}
                       className="text-gray-400 cursor-not-allowed"
                     >
                       <HiPencil className="h-5 w-5" />

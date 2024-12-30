@@ -1,18 +1,24 @@
 import TransactionItem from "./TransactionItem";
-import PropTypes from "prop-types";
+import { Transaction } from "../types";
 
 const TransactionList = ({
   isHome = false,
-  transactions,
+  transactions = [] as Transaction[],
   error,
   onEdit,
   onDelete,
+}: {
+  isHome?: boolean;
+  transactions: Transaction[];
+  error?: { message: string };
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => Promise<void>;
 }) => {
   if (error) {
     return <div>Error: {error.message}</div>;
   }
 
-  if (transactions.length === 0) {
+  if (!transactions || transactions.length === 0) {
     return (
       <div className="container mx-auto px-4 py-8">
         <p className="text-gray-500 text-center">
@@ -25,20 +31,19 @@ const TransactionList = ({
   const filteredTransactions = isHome ? transactions.slice(0, 3) : transactions;
 
   // Group transactions by date
-  const groupedTransactions = filteredTransactions.reduce(
-    (acc, transaction) => {
-      const date = new Date(transaction.date);
-      const day = date.toLocaleDateString("en-US", { day: "2-digit" });
-      const month = date.toLocaleDateString("en-US", { month: "short" });
-      const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
-      const formattedDate = `${day} ${month} | ${weekday}`;
+  const groupedTransactions = filteredTransactions.reduce<
+    Record<string, Transaction[]>
+  >((acc, transaction) => {
+    const date = new Date(transaction.date);
+    const day = date.toLocaleDateString("en-US", { day: "2-digit" });
+    const month = date.toLocaleDateString("en-US", { month: "short" });
+    const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
+    const formattedDate = `${day} ${month} | ${weekday}`;
 
-      acc[formattedDate] = acc[formattedDate] || [];
-      acc[formattedDate].push(transaction);
-      return acc;
-    },
-    {}
-  );
+    acc[formattedDate] = acc[formattedDate] || [];
+    acc[formattedDate].push(transaction);
+    return acc;
+  }, {});
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -61,13 +66,6 @@ const TransactionList = ({
       ))}
     </div>
   );
-};
-TransactionList.propTypes = {
-  isHome: PropTypes.bool,
-  transactions: PropTypes.array.isRequired,
-  error: PropTypes.object,
-  onEdit: PropTypes.func.isRequired,
-  onDelete: PropTypes.func.isRequired,
 };
 
 export default TransactionList;

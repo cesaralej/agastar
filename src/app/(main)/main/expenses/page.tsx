@@ -1,8 +1,11 @@
+"use client";
+
 import { useState } from "react";
-import { useTransactions } from "../context/TransactionContext";
+import { useTransactions } from "@/context/TransactionContext";
 import TransactionForm from "@/components/TransactionForm";
 import TransactionList from "@/components/TransactionList";
-import Spinner from "../components/Spinner";
+import NewTransaction from "@/components/NewTransaction";
+import Spinner from "@/components/Spinner";
 
 const ExpensesPage = () => {
   const {
@@ -24,6 +27,7 @@ const ExpensesPage = () => {
         >
           {showForm ? "Hide Transaction Form" : "Add Transaction"}
         </button>
+        <NewTransaction />
       </div>
 
       {showForm && <TransactionForm onSubmit={addTransaction} />}

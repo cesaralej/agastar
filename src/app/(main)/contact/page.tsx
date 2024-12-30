@@ -7,11 +7,18 @@ const ContactPage = () => {
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSubmit = async (e) => {
+  interface FormData {
+    name: string;
+    email: string;
+    message: string;
+  }
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setSubmitted(true);
     // Here you would typically send the form data to your server or a service like EmailJS
-    console.log("Sending message:", { name, email, message });
+    const formData: FormData = { name, email, message };
+    console.log("Sending message:", formData);
     setName("");
     setEmail("");
     setMessage("");
@@ -71,7 +78,7 @@ const ContactPage = () => {
             </label>
             <textarea
               id="message"
-              rows="4"
+              rows={4}
               className="w-full border border-gray-300 px-4 py-2 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
               value={message}
               onChange={(e) => setMessage(e.target.value)}

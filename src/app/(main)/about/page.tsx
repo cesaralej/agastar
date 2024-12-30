@@ -31,9 +31,9 @@ const AboutPage = () => {
           </h2>
           <p className="text-gray-700 leading-relaxed">
             We empower individuals to achieve financial clarity and reach their
-            full potential. Agastar is more than just a budgeting app; it's a
-            strategic platform designed to illuminate your financial landscape,
-            enabling informed decisions and sustainable growth.
+            full potential. Agastar is more than just a budgeting app; it&apos;s
+            a strategic platform designed to illuminate your financial
+            landscape, enabling informed decisions and sustainable growth.
           </p>
         </div>
       </section>

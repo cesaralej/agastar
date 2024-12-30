@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+"use client";
 
-import { auth } from "@/firebase/firebase";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+
+import { auth } from "@/lib/firebase";
 import {
   useCreateUserWithEmailAndPassword,
   useSignInWithEmailAndPassword,
@@ -12,7 +14,7 @@ import { FcGoogle } from "react-icons/fc"; // Import Google icon
 import { AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 
 const AuthPage = () => {
-  const navigate = useNavigate(); // Get history object for programmatic navigation
+  const router = useRouter();
 
   const [createUserWithEmailAndPassword, createUserLoading, createUserError] =
     useCreateUserWithEmailAndPassword(auth);
@@ -29,9 +31,9 @@ const AuthPage = () => {
 
   useEffect(() => {
     if (user || googleUser) {
-      navigate("/"); // Redirect to home if user is already logged in
+      router.push("/main/dashboard"); // Redirect to home if user is already logged in
     }
-  }, [user, googleUser, navigate]);
+  }, [user, googleUser, router]);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -49,7 +51,7 @@ const AuthPage = () => {
         // Handle specific errors here (e.g., check error.code)
       } else {
         // User created successfully
-        navigate("/");
+        router.push("/dashboard");
       }
     } catch (error) {
       console.log(error.message);
@@ -68,7 +70,7 @@ const AuthPage = () => {
     createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         if (userCredential) {
-          navigate("/");
+          router.push("/dashboard");
         }
       })
       .catch((error) => {
@@ -82,7 +84,7 @@ const AuthPage = () => {
   const onGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-      navigate("/"); // Redirect to home programmatically after success
+      router.push("/dashboard"); // Redirect to home programmatically after success
     } catch (error) {
       console.log(error.message);
     }

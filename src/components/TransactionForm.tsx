@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import categories from "../data/categories";
 import { useToast } from "@/hooks/use-toast";
+import { TransactionData } from "@/types";
 
 const typeOptions = ["income", "expense"];
 
@@ -14,8 +15,19 @@ const categoryOptions = {
   expense: Object.keys(categories).filter((category) => category !== "salary"),
 };
 
-const TransactionForm = ({ onSubmit }) => {
-  const toast = useToast();
+interface TransactionFormProps {
+  onSubmit: (formData: TransactionData) => Promise<void>;
+}
+
+interface ChangeEvent {
+  target: {
+    name: string;
+    value: string;
+  };
+}
+
+const TransactionForm = ({ onSubmit }: TransactionFormProps) => {
+  const { toast } = useToast();
   const getTodayDate = () => {
     const today = new Date();
     return today.toISOString().split("T")[0];
@@ -28,7 +40,17 @@ const TransactionForm = ({ onSubmit }) => {
     return `${hours}:${minutes}`;
   };
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<{
+    amount: string;
+    description: string;
+    category: string;
+    type: keyof typeof accountOptions;
+    account: string;
+    date: string;
+    time: string;
+    comment: string;
+    isCreditCardPayment: boolean;
+  }>({
     amount: "",
     description: "",
     category: "luxury",
@@ -52,7 +74,7 @@ const TransactionForm = ({ onSubmit }) => {
     }
   }, [formData.type]);
 
-  const handleChange = (e) => {
+  const handleChange = (e: ChangeEvent) => {
     const { name, value } = e.target;
 
     setFormData((prevData) => ({
@@ -84,7 +106,7 @@ const TransactionForm = ({ onSubmit }) => {
     });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (!formData.amount || !formData.category || !formData.date) {
@@ -92,7 +114,11 @@ const TransactionForm = ({ onSubmit }) => {
       return;
     }
 
-    if (isNaN(parseFloat(formData.amount)) || formData.amount.trim() === "") {
+    if (
+      isNaN(Number(formData.amount)) ||
+      Number(formData.amount) <= 0 ||
+      formData.amount.trim() === ""
+    ) {
       alert("Please enter a valid amount.");
       return;
     }
@@ -154,7 +180,7 @@ const TransactionForm = ({ onSubmit }) => {
           onChange={handleChange}
           disabled={formData.isCreditCardPayment}
           placeholder="e.g., Coffee at Starbucks"
-          maxLength="50"
+          maxLength={50}
           className="rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 w-full"
         />
       </div>
@@ -218,7 +244,7 @@ const TransactionForm = ({ onSubmit }) => {
         >
           {categoryOptions[formData.type].map((categoryKey) => (
             <option key={categoryKey} value={categoryKey}>
-              {categories[categoryKey].name}
+              {categories[categoryKey as keyof typeof categories].name}
             </option>
           ))}
         </select>
@@ -289,7 +315,7 @@ const TransactionForm = ({ onSubmit }) => {
             value={formData.comment}
             onChange={handleChange}
             placeholder="Add an optional note about this transaction"
-            rows="3"
+            rows={3}
             className="rounded-md border border-gray-300 px-3 py-2 focus:outline-none focus:ring-1 focus:ring-blue-500 w-full"
           />
         </div>

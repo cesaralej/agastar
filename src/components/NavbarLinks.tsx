@@ -1,8 +1,10 @@
+"use client";
+
 import Link from "next/link";
-import { useRouter } from "next/router";
+import { usePathname } from "next/navigation";
 
 const NavbarLinks = ({ isMobile = false, onCloseMobileMenu = () => {} }) => {
-  const router = useRouter();
+  const pathName = usePathname();
 
   const handleClick = () => {
     onCloseMobileMenu();
@@ -17,18 +19,20 @@ const NavbarLinks = ({ isMobile = false, onCloseMobileMenu = () => {} }) => {
   return (
     <div className={isMobile ? "flex flex-col" : "hidden md:flex space-x-8"}>
       <Link
-        href="/"
+        href="/main/dashboard"
         className={
-          router.pathname == "/" ? `${activeLinkStyle}` : `${navLinkStyle}`
+          pathName == "/main/dashboard"
+            ? `${activeLinkStyle}`
+            : `${navLinkStyle}`
         }
         onClick={handleClick}
       >
         Dashboard
       </Link>
       <Link
-        href="/expenses"
+        href="/main/expenses"
         className={
-          router.pathname == "/expenses"
+          pathName == "/main/expenses"
             ? `${activeLinkStyle}`
             : `${navLinkStyle}`
         }
@@ -37,11 +41,9 @@ const NavbarLinks = ({ isMobile = false, onCloseMobileMenu = () => {} }) => {
         Expenses
       </Link>
       <Link
-        href="/budget"
+        href="/main/budget"
         className={
-          router.pathname == "/budget"
-            ? `${activeLinkStyle}`
-            : `${navLinkStyle}`
+          pathName == "/main/budget" ? `${activeLinkStyle}` : `${navLinkStyle}`
         }
         onClick={handleClick}
       >
@@ -50,7 +52,7 @@ const NavbarLinks = ({ isMobile = false, onCloseMobileMenu = () => {} }) => {
       <Link
         href="/utilities"
         className={
-          router.pathname == "/utilities"
+          pathName == "/main/utilities"
             ? `${activeLinkStyle}`
             : `${navLinkStyle}`
         }

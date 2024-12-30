@@ -1,7 +1,6 @@
 "use client";
 import Summary from "@/components/Summary";
 import { useTransactions } from "@/context/TransactionContext";
-import ContextLayout from "../context-layout";
 
 const DashboardPage = () => {
   const { transactions, loading, error } = useTransactions();
@@ -14,10 +13,6 @@ const DashboardPage = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  return (
-    <ContextLayout>
-      <Summary transactions={transactions} />
-    </ContextLayout>
-  );
+  return <Summary transactions={transactions || []} />;
 };
 export default DashboardPage;
