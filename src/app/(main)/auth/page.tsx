@@ -27,7 +27,7 @@ const AuthPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState(""); // New state for confirm password
-  const [passwordError, setPasswordError] = useState(null);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
 
   useEffect(() => {
     if (user || googleUser) {
@@ -38,10 +38,7 @@ const AuthPage = () => {
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const [user, loading, error] = await signInWithEmailAndPassword(
-        email,
-        password
-      );
+      await signInWithEmailAndPassword(email, password);
       if (error) {
         console.log(
           "createUserWithEmailAndPassword error:",
@@ -54,12 +51,20 @@ const AuthPage = () => {
         router.push("/dashboard");
       }
     } catch (error) {
-      console.log(error.message);
+      if (error instanceof Error) {
+        console.log(error.message);
+      } else {
+        console.log("An unknown error occurred");
+      }
     }
     setPassword(""); // Clear password after successful login
   };
 
-  const handleSignup = async (e) => {
+  interface AuthError {
+    message: string;
+  }
+
+  const handleSignup = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     if (password !== confirmPassword) {
       setPasswordError("Passwords do not match");
@@ -73,7 +78,7 @@ const AuthPage = () => {
           router.push("/dashboard");
         }
       })
-      .catch((error) => {
+      .catch((error: AuthError) => {
         console.log(error.message);
       });
 

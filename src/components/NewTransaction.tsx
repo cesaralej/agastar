@@ -22,9 +22,6 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Type } from "lucide-react";
-import { time } from "console";
-import { comment } from "postcss";
 
 const schema = z.object({
   amount: z.number().positive("Amount must be a positive number"),

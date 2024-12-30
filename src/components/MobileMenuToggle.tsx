@@ -3,10 +3,7 @@ interface MobileMenuToggleProps {
   toggleMobileMenu: () => void;
 }
 
-const MobileMenuToggle = ({
-  isMobileMenuOpen,
-  toggleMobileMenu,
-}: MobileMenuToggleProps) => {
+const MobileMenuToggle = ({ toggleMobileMenu }: MobileMenuToggleProps) => {
   return (
     <button
       onClick={toggleMobileMenu}
