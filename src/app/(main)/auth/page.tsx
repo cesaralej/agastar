@@ -83,7 +83,7 @@ const AuthPage = () => {
     createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         if (userCredential) {
-          router.push("/dashboard");
+          router.push("/main/dashboard");
         }
       })
       .catch((error: AuthError) => {
