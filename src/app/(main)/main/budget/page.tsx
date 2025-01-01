@@ -1,71 +1,154 @@
 "use client";
-
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useBudgets } from "@/context/BudgetContext";
-import BudgetItem from "@/components/BudgetItem";
+import BudgetList from "@/components/budget/BudgetList";
+import categories from "@/data/categories";
+
+const monthNumberMap = {
+  January: 1,
+  February: 2,
+  March: 3,
+  April: 4,
+  May: 5,
+  June: 6,
+  July: 7,
+  August: 8,
+  September: 9,
+  October: 10,
+  November: 11,
+  December: 12,
+};
 
 const BudgetPage = () => {
-  const { budgets, loading, error } = useBudgets();
-  const [selectedMonth, setSelectedMonth] = useState<string>(
-    new Date().toISOString().slice(0, 7) // Current month in YYYY-MM format
+  const { budgets, loading, error, fetchBudgets, updateBudget, createBudget } =
+    useBudgets();
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [localBudgets, setLocalBudgets] = useState<{ [key: string]: number }>(
+    {}
   );
 
-  const handleMonthChange = (direction: "prev" | "next") => {
-    const [year, month] = selectedMonth.split("-").map(Number);
-    const newDate = new Date(year, month + (direction === "prev" ? -1 : 1));
-    setSelectedMonth(newDate.toISOString().slice(0, 7));
+  useEffect(() => {
+    console.log(
+      "BudgetPage useEffect: fetchBudgets for ",
+      selectedMonth,
+      selectedYear
+    );
+    fetchBudgets(selectedMonth, selectedYear).then(() => {
+      if (budgets) {
+        setLocalBudgets(
+          budgets.reduce((acc: { [key: string]: number }, budget) => {
+            acc[budget.category] = budget.amount;
+            return acc;
+          }, {})
+        );
+      } else {
+        setLocalBudgets(
+          Object.keys(categories).reduce(
+            (acc: { [key: string]: number }, category) => {
+              acc[category] = 0;
+              return acc;
+            },
+            {}
+          )
+        );
+      }
+    });
+  }, [selectedMonth, selectedYear]);
+
+  const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedMonth = event.target.value as string;
+    const monthNumber =
+      monthNumberMap[selectedMonth as keyof typeof monthNumberMap] - 1;
+    console.log("Selected month: ", monthNumber);
+    setSelectedMonth(monthNumber ?? 1); // Set a default month if not found
   };
 
-  if (loading) return <div>Loading...</div>;
-  if (error) return <div>Error: {error.message}</div>;
+  const handleYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedYear(parseInt(event.target.value, 10));
+  };
 
-  const currentBudget = budgets?.find(
-    (budget) => budget.month === selectedMonth
+  const handleBudgetChange = (category: string, amount: number) => {
+    setLocalBudgets((prev) => ({ ...prev, [category]: amount }));
+  };
+
+  const handleSave = async () => {
+    if (!budgets) return;
+
+    const budgetsToUpdate = budgets.filter(
+      (budget) => localBudgets[budget.category] !== budget.amount
+    );
+    const budgetsToCreate = Object.keys(localBudgets)
+      .filter(
+        (category) => !budgets.find((budget) => budget.category === category)
+      )
+      .map((category) => ({
+        category,
+        month: selectedMonth,
+        year: selectedYear,
+        amount: localBudgets[category],
+      }));
+
+    for (const budget of budgetsToUpdate) {
+      await updateBudget({ ...budget, amount: localBudgets[budget.category] });
+    }
+
+    for (const budget of budgetsToCreate) {
+      await createBudget(budget);
+    }
+    console.log("Budgets saved");
+  };
+
+  const months = Array.from({ length: 12 }, (_, i) => {
+    const date = new Date(0, i); // Month is 0-indexed
+    return date.toLocaleString("default", { month: "long" });
+  });
+
+  const years = Array.from(
+    { length: 5 },
+    (_, i) => new Date().getFullYear() - 2 + i
   );
 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+  console.log(localBudgets);
+
   return (
-    <div className="p-6 max-w-4xl mx-auto">
-      {/* Header Section */}
-      <div className="flex justify-between items-center mb-6">
+    <div className="p-4">
+      <div className="flex justify-between items-center mb-4">
+        <div className="flex gap-4 ">
+          <select value={selectedYear} onChange={handleYearChange}>
+            {years.map((year) => (
+              <option key={year} value={year}>
+                {year}
+              </option>
+            ))}
+          </select>
+          <select
+            value={months[selectedMonth] || "January"}
+            onChange={handleMonthChange}
+          >
+            {months.map((month) => (
+              <option key={month} value={month}>
+                {month}
+              </option>
+            ))}
+          </select>
+        </div>
         <button
-          onClick={() => handleMonthChange("prev")}
-          className="text-blue-500 hover:underline"
+          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          onClick={handleSave}
         >
-          Previous
-        </button>
-        <h1 className="text-xl font-bold">Budgets for {selectedMonth}</h1>
-        <button
-          onClick={() => handleMonthChange("next")}
-          className="text-blue-500 hover:underline"
-        >
-          Next
+          Save
         </button>
       </div>
 
-      {/* Income and Summary */}
-      <div className="grid grid-cols-2 gap-4 mb-6">
-        <div className="bg-blue-100 p-4 rounded shadow">
-          <h2 className="text-lg font-semibold">Total Income</h2>
-          <p className="text-2xl font-bold">${currentBudget?.income || 0}</p>
-        </div>
-        <div className="bg-green-100 p-4 rounded shadow">
-          <h2 className="text-lg font-semibold">Total Budgeted</h2>
-          <p className="text-2xl font-bold">
-            $
-            {currentBudget?.categories.reduce(
-              (total, category) => total + category.budget,
-              0
-            ) || 0}
-          </p>
-        </div>
-      </div>
-
-      {/* Budget List */}
-      <div className="space-y-4">
-        {currentBudget?.categories.map((category) => (
-          <BudgetItem key={category.name} category={category} />
-        ))}
-      </div>
+      <BudgetList budgets={localBudgets} onBudgetChange={handleBudgetChange} />
     </div>
   );
 };

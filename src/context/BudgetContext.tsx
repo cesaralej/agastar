@@ -1,17 +1,24 @@
 "use client";
 
-import { createContext, useContext, useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useCallback,
+  useState,
+  useEffect,
+} from "react";
 import {
   collection,
   query,
-  onSnapshot,
-  getDoc,
+  getDocs,
   setDoc,
   where,
   doc,
-  updateDoc,
   FirestoreError,
 } from "firebase/firestore";
+
+import { serverTimestamp } from "firebase/firestore";
+
 import { auth, db } from "../lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 
@@ -21,7 +28,7 @@ interface Budget {
   month: number;
   year: number;
   amount: number;
-  lastUpdated?: any;
+  lastUpdated?: Date;
 }
 
 interface BudgetContextType {
@@ -38,12 +45,14 @@ const BudgetContext = createContext<BudgetContextType | null>(null);
 export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const [user, loadingUser] = useAuthState(auth);
+  const user = useAuthState(auth)[0];
   const [budgets, setBudgets] = useState<Budget[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<FirestoreError | null>(null);
 
-  const fetchBudgets = async (month: number, year: number) => {
+  //Esto del callback esta raro, funciona diferente a sin el callback
+  const fetchBudgets = useCallback(async (month: number, year: number) => {
+    console.log("Context: Fetching budgets for ", month, year);
     setLoading(true);
     setError(null);
     if (!user) {
@@ -59,73 +68,71 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         where("year", "==", year)
       );
       const querySnapshot = await getDocs(q);
+      console.log("Query snapshot: ", querySnapshot);
 
       const fetchedBudgets = querySnapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       })) as Budget[];
 
+      console.log("Fetched budgets: ", fetchedBudgets);
       setBudgets(fetchedBudgets);
-    } catch (err: any) {
-      setError(err);
+      console.log("Set budgets: ", budgets);
+    } catch (error) {
+      console.log(error);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const addBudget = async (
-    month: string,
-    income: number,
-    categories: CategoryBudget[]
-  ) => {
-    if (!user) {
-      console.error("User not logged in. Cannot add budget.");
-      return;
-    }
-
+  const createBudget = async (budgetData: Omit<Budget, "id">) => {
+    if (!user) return;
     try {
-      const budgetDocRef = doc(db, "users", user.uid, "budgets", month);
-      await setDoc(budgetDocRef, { month, income, categories });
-      console.log("Budget added for month: ", month);
+      const budgetRef = doc(
+        db,
+        "users",
+        user.uid,
+        "budgets",
+        `${budgetData.category}-${budgetData.month}-${budgetData.year}`
+      );
+      await setDoc(budgetRef, {
+        ...budgetData,
+        lastUpdated: serverTimestamp(),
+      });
+      await fetchBudgets(budgetData.month, budgetData.year);
     } catch (error) {
-      console.error("Error adding budget:", error);
+      console.log(error);
     }
   };
 
-  const updateBudget = async (
-    month: string,
-    category: string,
-    newBudget: number
-  ) => {
-    if (!user) {
-      console.error("User not logged in. Cannot update budget.");
-      return;
-    }
-
+  const updateBudget = async (budget: Budget) => {
+    if (!user) return;
     try {
-      const budgetDocRef = doc(db, "users", user.uid, "budgets", month);
-      const budgetDoc = await getDoc(budgetDocRef);
-      if (budgetDoc.exists()) {
-        const budgetData = budgetDoc.data();
-        const updatedCategories = budgetData.categories.map(
-          (cat: CategoryBudget) =>
-            cat.name === category ? { ...cat, budget: newBudget } : cat
-        );
-
-        await updateDoc(budgetDocRef, { categories: updatedCategories });
-        console.log("Budget updated for category: ", category);
-      }
+      const budgetRef = doc(db, "users", user.uid, "budgets", budget.id);
+      await setDoc(budgetRef, {
+        ...budget,
+        lastUpdated: serverTimestamp(),
+      });
+      const { month, year } = budget;
+      await fetchBudgets(month, year);
     } catch (error) {
-      console.error("Error updating budget:", error);
+      console.log(error);
     }
   };
+
+  useEffect(() => {
+    console.log("Context useEffect");
+    const today = new Date();
+    fetchBudgets(today.getMonth() + 1, today.getFullYear());
+  }, [user]);
 
   const value = {
     budgets,
     loading,
     error,
-    addBudget,
     updateBudget,
+    fetchBudgets,
+    createBudget,
   };
 
   return (

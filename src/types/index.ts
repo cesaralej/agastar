@@ -1,3 +1,5 @@
+import React from "react";
+
 export interface TransactionData {
   amount: string;
   date: string;
@@ -12,4 +14,10 @@ export interface TransactionData {
 
 export interface Transaction extends TransactionData {
   id: string;
+}
+
+export interface Category {
+  name: string;
+  icon: React.JSX.Element;
+  color: string;
 }
