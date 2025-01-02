@@ -35,7 +35,7 @@ interface BudgetContextType {
   budgets: Budget[] | null;
   loading: boolean;
   error: FirestoreError | null;
-  fetchBudgets: (month: number, year: number) => Promise<void>;
+  fetchBudgets: (month: number, year: number) => Promise<Budget[]>;
   updateBudget: (budget: Budget) => Promise<void>;
   createBudget: (budget: Omit<Budget, "id">) => Promise<void>;
 }
@@ -50,40 +50,44 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<FirestoreError | null>(null);
 
-  //Esto del callback esta raro, funciona diferente a sin el callback
-  const fetchBudgets = useCallback(async (month: number, year: number) => {
-    console.log("Context: Fetching budgets for ", month, year);
-    setLoading(true);
-    setError(null);
-    if (!user) {
-      setLoading(false);
-      return;
-    }
+  //Esto del callback esta raro, no entiendo bien que hace
+  const fetchBudgets = useCallback(
+    async (month: number, year: number) => {
+      //console.log("BC fetching budgets for ", month, year);
+      setLoading(true);
+      setError(null);
+      if (!user) {
+        setLoading(false);
+        return [];
+      }
 
-    try {
-      const budgetsCollection = collection(db, "users", user.uid, "budgets");
-      const q = query(
-        budgetsCollection,
-        where("month", "==", month),
-        where("year", "==", year)
-      );
-      const querySnapshot = await getDocs(q);
-      console.log("Query snapshot: ", querySnapshot);
+      try {
+        const budgetsCollection = collection(db, "users", user.uid, "budgets");
+        const q = query(
+          budgetsCollection,
+          where("month", "==", month),
+          where("year", "==", year)
+        );
+        const querySnapshot = await getDocs(q);
+        //console.log("BC Query snapshot: ", querySnapshot);
 
-      const fetchedBudgets = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Budget[];
-
-      console.log("Fetched budgets: ", fetchedBudgets);
-      setBudgets(fetchedBudgets);
-      console.log("Set budgets: ", budgets);
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
+        const fetchedBudgets = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        })) as Budget[];
+        //console.log("BC Fetched budgets: ", fetchedBudgets);
+        setBudgets(fetchedBudgets);
+        //console.log("BC Set budgets: ", budgets);
+        return fetchedBudgets;
+      } catch (error) {
+        console.log(error);
+        return [];
+      } finally {
+        setLoading(false);
+      }
+    },
+    [user]
+  );
 
   const createBudget = async (budgetData: Omit<Budget, "id">) => {
     if (!user) return;
@@ -121,7 +125,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   useEffect(() => {
-    console.log("Context useEffect");
+    console.log("BC useEffect dependency: ", user);
     const today = new Date();
     fetchBudgets(today.getMonth() + 1, today.getFullYear());
   }, [user]);

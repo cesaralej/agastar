@@ -1,43 +1,44 @@
 "use client";
 import React, { useState, useEffect } from "react";
 import { useBudgets } from "@/context/BudgetContext";
+import { useTransactions } from "@/context/TransactionContext";
 import BudgetList from "@/components/budget/BudgetList";
 import categories from "@/data/categories";
+import Spinner from "@/components/Spinner";
 
 const monthNumberMap = {
-  January: 1,
-  February: 2,
-  March: 3,
-  April: 4,
-  May: 5,
-  June: 6,
-  July: 7,
-  August: 8,
-  September: 9,
-  October: 10,
-  November: 11,
-  December: 12,
+  January: 0,
+  February: 1,
+  March: 2,
+  April: 3,
+  May: 4,
+  June: 5,
+  July: 6,
+  August: 7,
+  September: 8,
+  October: 9,
+  November: 10,
+  December: 11,
 };
 
 const BudgetPage = () => {
   const { budgets, loading, error, fetchBudgets, updateBudget, createBudget } =
     useBudgets();
-  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth() + 1);
+  const { transactions } = useTransactions();
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [localBudgets, setLocalBudgets] = useState<{ [key: string]: number }>(
     {}
   );
+  //console.log("BP render");
 
   useEffect(() => {
-    console.log(
-      "BudgetPage useEffect: fetchBudgets for ",
-      selectedMonth,
-      selectedYear
-    );
-    fetchBudgets(selectedMonth, selectedYear).then(() => {
-      if (budgets) {
+    //console.log("BP useEffect");
+    //console.log("BP useEffect: fetchBudgets", selectedMonth, selectedYear);
+    fetchBudgets(selectedMonth, selectedYear).then((fetchedBudgets) => {
+      if (fetchedBudgets && fetchedBudgets.length > 0) {
         setLocalBudgets(
-          budgets.reduce((acc: { [key: string]: number }, budget) => {
+          fetchedBudgets.reduce((acc: { [key: string]: number }, budget) => {
             acc[budget.category] = budget.amount;
             return acc;
           }, {})
@@ -53,15 +54,24 @@ const BudgetPage = () => {
           )
         );
       }
+      //console.log("BP useEffect: LocalBudgets", localBudgets);
     });
-  }, [selectedMonth, selectedYear]);
+  }, [selectedMonth, selectedYear, fetchBudgets, transactions]);
+
+  const spentPerCategory = (transactions ?? []).reduce((acc, transaction) => {
+    acc[transaction.category] =
+      (acc[transaction.category] ?? 0) + Number(transaction.amount);
+    return acc;
+  }, {} as Record<string, number>);
+
+  //console.log("BP spentPerCategory: ", spentPerCategory);
 
   const handleMonthChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     const selectedMonth = event.target.value as string;
     const monthNumber =
-      monthNumberMap[selectedMonth as keyof typeof monthNumberMap] - 1;
-    console.log("Selected month: ", monthNumber);
-    setSelectedMonth(monthNumber ?? 1); // Set a default month if not found
+      monthNumberMap[selectedMonth as keyof typeof monthNumberMap];
+    //console.log("BP Selected month: ", monthNumber);
+    setSelectedMonth(monthNumber ?? 0); // Set a default month if not found
   };
 
   const handleYearChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -110,13 +120,14 @@ const BudgetPage = () => {
   );
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner loading={loading} />;
   }
 
   if (error) {
     return <div>Error: {error.message}</div>;
   }
-  console.log(localBudgets);
+
+  //console.log("BP Render: ", localBudgets);
 
   return (
     <div className="p-4">
@@ -148,7 +159,11 @@ const BudgetPage = () => {
         </button>
       </div>
 
-      <BudgetList budgets={localBudgets} onBudgetChange={handleBudgetChange} />
+      <BudgetList
+        budgets={localBudgets}
+        spentPerCategory={spentPerCategory}
+        onBudgetChange={handleBudgetChange}
+      />
     </div>
   );
 };
