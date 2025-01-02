@@ -8,6 +8,7 @@ import {
   useCreateUserWithEmailAndPassword,
   useSignInWithEmailAndPassword,
   useSignInWithGoogle,
+  useAuthState,
 } from "react-firebase-hooks/auth";
 
 import { FcGoogle } from "react-icons/fc"; // Import Google icon
@@ -22,7 +23,7 @@ const AuthPage = () => {
     createUserLoading,
     createUserError,
   ] = useCreateUserWithEmailAndPassword(auth);
-  const [signInWithEmailAndPassword, user, loading, error] =
+  const [signInWithEmailAndPassword, signInUser, loading, error] =
     useSignInWithEmailAndPassword(auth);
   const [signInWithGoogle, googleUser, googleLoading, googleError] =
     useSignInWithGoogle(auth);
@@ -32,12 +33,14 @@ const AuthPage = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState(""); // New state for confirm password
   const [passwordError, setPasswordError] = useState<string | null>(null);
+  const user = useAuthState(auth)[0];
 
   useEffect(() => {
-    if (user || googleUser || registeredUser) {
+    //console.log("Login page use effect:", user);
+    if (user || signInUser || googleUser || registeredUser) {
       router.push("/main/dashboard"); // Redirect to home if user is already logged in
     }
-  }, [user, googleUser, router, registeredUser]);
+  }, [user, googleUser, router, registeredUser, signInUser]);
 
   interface LoginError {
     code: string;
@@ -55,10 +58,8 @@ const AuthPage = () => {
           loginError.code,
           loginError.message
         );
-        // Handle specific errors here (e.g., check error.code)
       } else {
-        // User created successfully
-        router.push("/dashboard");
+        router.push("/main/dashboard");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -99,13 +100,23 @@ const AuthPage = () => {
   const onGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-      router.push("/dashboard"); // Redirect to home programmatically after success
+      router.push("/main/dashboard"); // Redirect to home programmatically after success
     } catch (error) {
       if (error instanceof Error) {
         console.log("An unknown error occurred");
       }
     }
   };
+
+  if (loading || createUserLoading || googleLoading) {
+    return <div>Loading...</div>;
+  }
+
+  //There is an issue here
+  if (user || signInUser || googleUser || registeredUser) {
+    router.replace("/main/dashboard");
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">

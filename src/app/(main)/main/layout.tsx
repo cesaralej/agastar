@@ -20,14 +20,16 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const [user, loadingUser] = useAuthState(auth);
   const [isUserValid, setIsUserValid] = useState<boolean>(false);
 
+  //console.log("ML Render");
+
   useEffect(() => {
     const checkAuth = () => {
-      console.log("Checking auth");
+      console.log("ML useEffect Checking auth");
       if (user) {
         setIsUserValid(true);
         //console.log("This is the logged in user", user);
       } else {
-        console.log("no user found");
+        console.log("ML no user found");
         router.push("/");
       }
     };
