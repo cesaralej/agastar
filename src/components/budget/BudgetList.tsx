@@ -12,7 +12,7 @@ const BudgetList = ({
   spentPerCategory: { [key: string]: number };
 }) => {
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
       {Object.keys(categories).map((category) => {
         const categoryData = categories[
           category as keyof typeof categories

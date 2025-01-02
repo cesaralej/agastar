@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import { useBudgets } from "@/context/BudgetContext";
 import { useTransactions } from "@/context/TransactionContext";
+import BudgetSummary from "@/components/budget/BudgetSummary";
 import BudgetList from "@/components/budget/BudgetList";
 import categories from "@/data/categories";
 import Spinner from "@/components/Spinner";
@@ -30,6 +31,7 @@ const BudgetPage = () => {
   const [localBudgets, setLocalBudgets] = useState<{ [key: string]: number }>(
     {}
   );
+  const [isSaveDisabled, setIsSaveDisabled] = useState(false);
   //console.log("BP render");
 
   useEffect(() => {
@@ -56,13 +58,37 @@ const BudgetPage = () => {
       }
       //console.log("BP useEffect: LocalBudgets", localBudgets);
     });
-  }, [selectedMonth, selectedYear, fetchBudgets, transactions]);
+  }, [selectedMonth, selectedYear, fetchBudgets]);
 
-  const spentPerCategory = (transactions ?? []).reduce((acc, transaction) => {
-    acc[transaction.category] =
-      (acc[transaction.category] ?? 0) + Number(transaction.amount);
-    return acc;
-  }, {} as Record<string, number>);
+  const spentPerCategory = (transactions ?? [])
+    .filter((transaction) => transaction.type === "expense")
+    .filter((transaction) => transaction.isCreditCardPayment === false)
+    .reduce((acc, transaction) => {
+      acc[transaction.category] =
+        (acc[transaction.category] ?? 0) + Number(transaction.amount);
+      return acc;
+    }, {} as Record<string, number>);
+
+  const totalIncome = (transactions ?? [])
+    .filter((transaction) => transaction.type === "income")
+    .filter((transaction) => transaction.isCreditCardPayment === false)
+    .reduce((acc, transaction) => acc + Number(transaction.amount), 0);
+
+  const totalBudget = Object.values(localBudgets).reduce(
+    (acc, amount) => acc + amount,
+    0
+  );
+
+  useEffect(() => {
+    console.log("BP useEffect: isSaveDisabled", isSaveDisabled);
+    setIsSaveDisabled(
+      Object.keys(localBudgets).every(
+        (category) =>
+          localBudgets[category] ===
+          budgets?.find((b) => b.category === category)?.amount
+      )
+    );
+  }, [localBudgets, budgets]);
 
   //console.log("BP spentPerCategory: ", spentPerCategory);
 
@@ -133,7 +159,11 @@ const BudgetPage = () => {
     <div className="p-4">
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-4 ">
-          <select value={selectedYear} onChange={handleYearChange}>
+          <select
+            value={selectedYear}
+            onChange={handleYearChange}
+            className="border border-gray-300 rounded-md p-2"
+          >
             {years.map((year) => (
               <option key={year} value={year}>
                 {year}
@@ -143,6 +173,7 @@ const BudgetPage = () => {
           <select
             value={months[selectedMonth] || "January"}
             onChange={handleMonthChange}
+            className="border border-gray-300 rounded-md p-2"
           >
             {months.map((month) => (
               <option key={month} value={month}>
@@ -151,13 +182,21 @@ const BudgetPage = () => {
             ))}
           </select>
         </div>
+
         <button
-          className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+          className={`font-bold py-2 px-4 rounded ${
+            isSaveDisabled || loading
+              ? "bg-gray-400 text-gray-200 cursor-not-allowed"
+              : "bg-blue-500 hover:bg-blue-700 text-white"
+          }`}
           onClick={handleSave}
+          disabled={isSaveDisabled || loading}
         >
-          Save
+          {loading ? "Saving..." : "Save"}
         </button>
       </div>
+
+      <BudgetSummary totalBudget={totalBudget} totalIncome={totalIncome} />
 
       <BudgetList
         budgets={localBudgets}
