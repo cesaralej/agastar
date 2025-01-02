@@ -31,7 +31,6 @@ const BudgetPage = () => {
   const [localBudgets, setLocalBudgets] = useState<{ [key: string]: number }>(
     {}
   );
-  const [isSaveDisabled, setIsSaveDisabled] = useState(false);
   //console.log("BP render");
 
   useEffect(() => {
@@ -78,17 +77,6 @@ const BudgetPage = () => {
     (acc, amount) => acc + amount,
     0
   );
-
-  useEffect(() => {
-    console.log("BP useEffect: isSaveDisabled", isSaveDisabled);
-    setIsSaveDisabled(
-      Object.keys(localBudgets).every(
-        (category) =>
-          localBudgets[category] ===
-          budgets?.find((b) => b.category === category)?.amount
-      )
-    );
-  }, [localBudgets, budgets]);
 
   //console.log("BP spentPerCategory: ", spentPerCategory);
 
@@ -184,13 +172,10 @@ const BudgetPage = () => {
         </div>
 
         <button
-          className={`font-bold py-2 px-4 rounded ${
-            isSaveDisabled || loading
-              ? "bg-gray-400 text-gray-200 cursor-not-allowed"
-              : "bg-blue-500 hover:bg-blue-700 text-white"
-          }`}
+          className={`font-bold py-2 px-4 rounded 
+               bg-blue-500 hover:bg-blue-700 text-white
+          `}
           onClick={handleSave}
-          disabled={isSaveDisabled || loading}
         >
           {loading ? "Saving..." : "Save"}
         </button>
