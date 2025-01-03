@@ -144,7 +144,7 @@ const BudgetPage = () => {
   //console.log("BP Render: ", localBudgets);
 
   return (
-    <div className="p-4">
+    <>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-4 ">
           <select
@@ -188,7 +188,7 @@ const BudgetPage = () => {
         spentPerCategory={spentPerCategory}
         onBudgetChange={handleBudgetChange}
       />
-    </div>
+    </>
   );
 };
 

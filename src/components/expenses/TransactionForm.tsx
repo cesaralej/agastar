@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import categories from "../data/categories";
+import categories from "@/data/categories";
 import { useToast } from "@/hooks/use-toast";
 import { TransactionData } from "@/types";
 

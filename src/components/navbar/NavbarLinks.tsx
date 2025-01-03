@@ -50,15 +50,15 @@ const NavbarLinks = ({ isMobile = false, onCloseMobileMenu = () => {} }) => {
         Budget
       </Link>
       <Link
-        href="/utilities"
+        href="/main/recurring"
         className={
-          pathName == "/main/utilities"
+          pathName == "/main/recurring"
             ? `${activeLinkStyle}`
             : `${navLinkStyle}`
         }
         onClick={handleClick}
       >
-        Utilities
+        Recurring
       </Link>
     </div>
   );
