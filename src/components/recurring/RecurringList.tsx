@@ -1,14 +1,27 @@
 import RecurringItem from "./RecurringItem";
 
-const RecurringList = ({ expenses, onEdit, onDelete }: any) => {
+interface Expense {
+  id: string;
+  name: string;
+  dueDate: Date;
+  amount: number;
+}
+
+interface RecurringListProps {
+  expenses: Expense[];
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+const RecurringList = ({ expenses, onEdit, onDelete }: RecurringListProps) => {
   return (
     <div className="mt-4">
-      {expenses.map((expense: any) => (
+      {expenses.map((expense: Expense) => (
         <RecurringItem
           key={expense.id}
           expense={expense}
-          onEdit={onEdit}
-          onDelete={onDelete}
+          onEdit={() => onEdit(expense.id)}
+          onDelete={() => onDelete(expense.id)}
         />
       ))}
     </div>

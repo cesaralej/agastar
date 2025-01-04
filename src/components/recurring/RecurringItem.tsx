@@ -1,4 +1,15 @@
-const RecurringItem = ({ expense, onEdit, onDelete }: any) => {
+interface RecurringItemProps {
+  expense: {
+    id: string;
+    name: string;
+    dueDate: Date;
+    amount: number;
+  };
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
+}
+
+const RecurringItem = ({ expense, onEdit, onDelete }: RecurringItemProps) => {
   return (
     <div className="bg-white rounded-lg shadow-md p-4 mb-4 flex items-center justify-between">
       <div>
