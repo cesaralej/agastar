@@ -1,6 +1,6 @@
 import TransactionItem from "./TransactionItem";
-import { Transaction } from "../types";
-import { TransactionData } from "../types";
+import { Transaction } from "@/types";
+import { TransactionData } from "@/types";
 
 const TransactionList = ({
   isHome = false,

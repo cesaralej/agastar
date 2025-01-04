@@ -4,8 +4,8 @@ import { HiPlusSm, HiMinusSm, HiPencil, HiTrash } from "react-icons/hi";
 import { FaCreditCard, FaWallet, FaCoins } from "react-icons/fa";
 import { useToast } from "@/hooks/use-toast";
 
-import { Transaction } from "../types";
-import { TransactionData } from "../types";
+import { Transaction } from "@/types";
+import { TransactionData } from "@/types";
 
 type CategoryKey = keyof typeof categories;
 

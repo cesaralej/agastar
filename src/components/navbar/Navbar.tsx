@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../../lib/firebase";
+import { auth } from "@/lib/firebase";
 import UserMenu from "./UserMenu";
 import NavbarLinks from "./NavbarLinks";
 import MobileMenuToggle from "./MobileMenuToggle";
