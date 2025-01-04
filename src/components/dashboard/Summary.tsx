@@ -7,7 +7,7 @@ import {
   FaWallet,
   FaCreditCard,
 } from "react-icons/fa";
-import { Transaction } from "../types";
+import { Transaction } from "@/types";
 
 const Summary = ({ transactions }: { transactions: Transaction[] }) => {
   const [summary, setSummary] = useState({
