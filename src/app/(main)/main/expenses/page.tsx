@@ -4,7 +4,8 @@ import { useState } from "react";
 import { useTransactions } from "@/context/TransactionContext";
 import TransactionForm from "@/components/expenses/TransactionForm";
 import TransactionList from "@/components/expenses/TransactionList";
-//import NewTransaction from "@/components/expenses/NewTransaction";
+import TransactionDrawer from "@/components/expenses/TransactionDrawer";
+import NewTransaction from "@/components/expenses/NewTransaction";
 import Spinner from "@/components/Spinner";
 import { PlusIcon } from "lucide-react";
 
@@ -28,6 +29,7 @@ const ExpensesPage = () => {
         {showForm ? "Hide Transaction Form" : <PlusIcon size={24} />}
       </button>
       {/* <NewTransaction /> */}
+      <TransactionDrawer />
 
       {showForm && <TransactionForm onSubmit={addTransaction} />}
 
