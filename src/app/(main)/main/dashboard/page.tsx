@@ -1,5 +1,5 @@
 "use client";
-import Summary from "@/components/Summary";
+import Summary from "@/components/dashboard/Summary";
 import { useTransactions } from "@/context/TransactionContext";
 
 const DashboardPage = () => {
@@ -13,6 +13,10 @@ const DashboardPage = () => {
     return <div>Error: {error.message}</div>;
   }
 
-  return <Summary transactions={transactions || []} />;
+  return (
+    <>
+      <Summary transactions={transactions || []} />
+    </>
+  );
 };
 export default DashboardPage;

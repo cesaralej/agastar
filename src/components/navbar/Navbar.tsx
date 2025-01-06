@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { auth } from "../lib/firebase";
+import { auth } from "@/lib/firebase";
 import UserMenu from "./UserMenu";
 import NavbarLinks from "./NavbarLinks";
 import MobileMenuToggle from "./MobileMenuToggle";
@@ -24,7 +24,7 @@ const Navbar = () => {
           <div className="flex items-center space-x-3">
             <FaShuttleSpace className="h-8 w-8 text-purple-600 transform rotate-[-50deg]" />
             <span className="text-2xl font-semibold text-gray-900 dark:text-white">
-              AGASTAR
+              Agastar
             </span>
           </div>
         </Link>

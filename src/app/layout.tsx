@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Navbar from "@/components/Navbar";
+import Navbar from "@/components/navbar/Navbar";
 import Footer from "@/components/Footer";
 import { Toaster } from "@/components/ui/toaster";
 import Providers from "./providers";
@@ -35,7 +35,7 @@ export default function RootLayout({
           <Navbar />
         </header>
 
-        <main className="flex-grow bg-gray-100 ">
+        <main className="flex-grow bg-gray-100 p-4">
           <Providers>{children}</Providers>
         </main>
 
