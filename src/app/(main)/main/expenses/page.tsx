@@ -5,7 +5,6 @@ import { useTransactions } from "@/context/TransactionContext";
 import TransactionForm from "@/components/expenses/TransactionForm";
 import TransactionList from "@/components/expenses/TransactionList";
 import TransactionDrawer from "@/components/expenses/TransactionDrawer";
-import NewTransaction from "@/components/expenses/NewTransaction";
 import Spinner from "@/components/Spinner";
 import { PlusIcon } from "lucide-react";
 
