@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useTransactions } from "@/context/TransactionContext";
-import TransactionForm from "@/components/expenses/TransactionForm";
 import TransactionList from "@/components/expenses/TransactionList";
 import TransactionDrawer from "@/components/expenses/TransactionDrawer";
 import Spinner from "@/components/Spinner";
@@ -18,7 +17,6 @@ const ExpensesPage = () => {
     updateTransaction,
     deleteTransaction,
   } = useTransactions();
-  const [showForm, setShowForm] = useState(false);
   const [showSheet, setShowSheet] = useState(false);
   const [editData, setEditData] = useState<Partial<Transaction> | null>(null);
 
@@ -41,13 +39,6 @@ const ExpensesPage = () => {
   return (
     <>
       <button
-        className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
-        onClick={() => setShowForm(!showForm)}
-      >
-        {showForm ? "Hide Transaction Form" : <PlusIcon size={24} />}
-      </button>
-      {/* <NewTransaction /> */}
-      <button
         onClick={handleAdd}
         className="fixed bottom-6 right-6 bg-blue-500 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg transition duration-300 ease-in-out transform hover:scale-110  z-50"
       >
@@ -61,8 +52,6 @@ const ExpensesPage = () => {
         onAdd={addTransaction}
         onEdit={updateTransaction}
       />
-
-      {showForm && <TransactionForm onSubmit={addTransaction} />}
 
       {loading ? (
         <Spinner loading={loading} />
