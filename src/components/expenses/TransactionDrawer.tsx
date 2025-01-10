@@ -1,31 +1,50 @@
-import { useState } from "react";
 import {
   Drawer,
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
-  DrawerTrigger,
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import { PlusIcon } from "lucide-react";
-
 import NewTransaction from "./NewTransaction";
 
-const TransactionDrawer = () => {
-  const [showSheet, setShowSheet] = useState(false);
+import { Transaction, TransactionData } from "@/types";
+
+const TransactionDrawer = ({
+  isEdit,
+  showSheet,
+  setShowSheet,
+  initialData,
+  onAdd,
+  onEdit,
+}: {
+  isEdit?: boolean;
+  showSheet: boolean;
+  setShowSheet: (show: boolean) => void;
+  initialData?: Partial<Transaction> | null;
+  onAdd: (transaction: TransactionData) => Promise<void>;
+  onEdit: (
+    transactionId: string,
+    transaction: TransactionData
+  ) => Promise<void>;
+}) => {
   return (
     <Drawer open={showSheet} onOpenChange={setShowSheet}>
-      <DrawerTrigger className="fixed bottom-6 right-6 bg-blue-500 hover:bg-blue-700 text-white rounded-full p-3 shadow-lg transition duration-300 ease-in-out transform hover:scale-110">
-        <PlusIcon size={24} />
-      </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Add Transaction</DrawerTitle>
+          <DrawerTitle>
+            {isEdit ? "Update Transaction" : "Add Transaction"}
+          </DrawerTitle>
         </DrawerHeader>
         <ScrollArea className="overflow-y-auto">
           <div className="p-6">
-            <NewTransaction setShowSheet={setShowSheet} />
+            <NewTransaction
+              setShowSheet={setShowSheet}
+              initialData={initialData}
+              isEdit={isEdit}
+              onAdd={onAdd}
+              onEdit={onEdit}
+            />
           </div>
         </ScrollArea>
       </DrawerContent>

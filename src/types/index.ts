@@ -1,13 +1,18 @@
-import React from "react";
+import { CategoryType } from "@/data/categoriesv2";
+export const ACCOUNTS = ["credit", "savings"] as const;
+export const TYPES = ["income", "expense"] as const;
+export type AccountType = (typeof ACCOUNTS)[number];
+export type TypeCategory = (typeof TYPES)[number];
 
 export interface TransactionData {
   amount: string;
-  date: string;
+  date: Date;
+  effectiveDate?: Date;
   time: string;
   description: string;
-  category: string;
-  type: "income" | "expense";
-  account: string;
+  category: CategoryType;
+  type: TypeCategory;
+  account: AccountType;
   comment?: string;
   isCreditCardPayment?: boolean;
 }

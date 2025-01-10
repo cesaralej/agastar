@@ -1,6 +1,5 @@
 import TransactionItem from "./TransactionItem";
 import { Transaction } from "@/types";
-import { TransactionData } from "@/types";
 
 const TransactionList = ({
   isHome = false,
@@ -12,10 +11,7 @@ const TransactionList = ({
   isHome?: boolean;
   transactions: Transaction[];
   error?: { message: string };
-  onEdit: (
-    id: string,
-    updatedTransactionData: Partial<TransactionData>
-  ) => void;
+  onEdit: (transaction: Transaction) => void;
   onDelete: (id: string) => Promise<void>;
 }) => {
   if (error) {

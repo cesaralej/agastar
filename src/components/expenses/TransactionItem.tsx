@@ -5,7 +5,6 @@ import { FaCreditCard, FaWallet, FaCoins } from "react-icons/fa";
 import { useToast } from "@/hooks/use-toast";
 
 import { Transaction } from "@/types";
-import { TransactionData } from "@/types";
 
 type CategoryKey = keyof typeof categories;
 
@@ -15,17 +14,15 @@ const TransactionItem = ({
   onDelete,
 }: {
   transaction: Transaction;
-  onEdit: (
-    id: string,
-    updatedTransactionData: Partial<TransactionData>
-  ) => void;
+  onEdit: (transaction: Transaction) => void;
   onDelete: (id: string) => Promise<void>;
 }) => {
   const [isHovering, setIsHovering] = useState(false);
   const { toast } = useToast();
 
   const onEditClick = () => {
-    onEdit(transaction.id, {});
+    console.log("Edit clicked");
+    onEdit(transaction);
   };
 
   const handleDelete = async () => {
@@ -116,15 +113,14 @@ const TransactionItem = ({
                 {isHovering && (
                   <div className="flex gap-1 absolute top-0 right-0 p-1 rounded-md">
                     <button
-                      disabled
                       onClick={onEditClick}
-                      className="text-gray-400 cursor-not-allowed"
+                      className="text-gray-400 hover:text-blue-500 z-10"
                     >
                       <HiPencil className="h-5 w-5" />
                     </button>
                     <button
                       onClick={handleDelete}
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-500 hover:text-red-700 z-10"
                     >
                       <HiTrash className="h-5 w-5" />
                     </button>

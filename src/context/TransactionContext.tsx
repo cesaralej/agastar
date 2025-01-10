@@ -59,6 +59,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
           return {
             id: doc.id,
             date: data?.date?.toDate() || null,
+            effectiveDate: data?.effectiveDate?.toDate() || null,
             amount: data.amount || 0,
             time: data.time || "",
             description: data.description || "",
@@ -95,10 +96,15 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         "transactions"
       );
 
+      const datePart = transactionData.date.toISOString().split("T")[0]; // Extract "YYYY-MM-DD"
+
+      const dateTime = new Date(`${datePart}T${transactionData.time}:00`);
+      console.log("TC transaction time:", dateTime);
+
       const docRef = await addDoc(transactionsCollectionRef, {
         ...transactionData,
         amount: Number(transactionData.amount),
-        date: new Date(`${transactionData.date}T${transactionData.time}`),
+        date: dateTime,
       });
       console.log("Document written with ID: ", docRef.id);
     } catch (error) {
@@ -131,10 +137,15 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const deleteTransaction = async (transactionId: string) => {
+  const deleteTransaction = async (transactionId: string | undefined) => {
     // New delete function
     if (!user) {
       console.error("User not logged in. Cannot delete transaction.");
+      return;
+    }
+
+    if (!transactionId) {
+      console.error("Transaction ID is required to delete a transaction.");
       return;
     }
 
