@@ -2,8 +2,8 @@
 
 import { useState } from "react";
 import { useTransactions } from "@/context/TransactionContext";
-import TransactionList from "@/components/expenses/TransactionList";
-import TransactionDrawer from "@/components/expenses/TransactionDrawer";
+import TransactionList from "@/components/transactions/TransactionList";
+import TransactionDrawer from "@/components/transactions/TransactionDrawer";
 import Spinner from "@/components/Spinner";
 import { PlusIcon } from "lucide-react";
 import { Transaction, TransactionData } from "@/types";
