@@ -49,5 +49,5 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     return null;
   }
 
-  return <>{children}</>;
+  return <div className="max-w-4xl  mx-auto">{children}</div>;
 }
