@@ -115,7 +115,6 @@ const NewTransaction = ({
       : categories.filter((category) => category.name !== "salary");
 
   useEffect(() => {
-    console.log("Type changed:", type);
     if (type === "income") {
       form.setValue("account", "savings"); // Set account to "savings"
       form.setValue("category", "salary"); // Set category to "salary"
@@ -128,24 +127,20 @@ const NewTransaction = ({
   const handleSubmit = (data: TransactionData) => {
     setIsSubmitting(true);
 
-    try {
-      if (isEdit) {
-        console.log("Editing transaction:", data);
-        if (initialData?.id) {
-          onEdit(initialData.id, data);
-        } else {
-          console.error("No transaction ID found for editing");
-        }
+    if (isEdit) {
+      console.log("Editing transaction:", data);
+      if (initialData?.id) {
+        onEdit(initialData.id, data);
       } else {
-        console.log("Adding new transaction:", data);
-        onAdd(data);
+        console.error("No transaction ID found for editing");
       }
-      setShowSheet(false);
-    } catch (error) {
-      console.error("Error submitting form:", error);
-    } finally {
-      setIsSubmitting(false);
+    } else {
+      console.log("Adding new transaction:", data);
+      onAdd(data);
     }
+    setShowSheet(false);
+
+    setIsSubmitting(false);
   };
 
   return (

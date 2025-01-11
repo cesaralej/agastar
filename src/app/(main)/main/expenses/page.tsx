@@ -6,7 +6,8 @@ import TransactionList from "@/components/expenses/TransactionList";
 import TransactionDrawer from "@/components/expenses/TransactionDrawer";
 import Spinner from "@/components/Spinner";
 import { PlusIcon } from "lucide-react";
-import { Transaction } from "@/types";
+import { Transaction, TransactionData } from "@/types";
+import { useToast } from "@/hooks/use-toast";
 
 const ExpensesPage = () => {
   const {
@@ -19,14 +20,47 @@ const ExpensesPage = () => {
   } = useTransactions();
   const [showSheet, setShowSheet] = useState(false);
   const [editData, setEditData] = useState<Partial<Transaction> | null>(null);
+  const { toast } = useToast();
 
   const handleAdd = () => {
     setEditData(null);
     setShowSheet(true);
   };
 
+  const onAdd = async (transaction: TransactionData) => {
+    try {
+      await addTransaction(transaction);
+      toast({
+        description: "Transaction added",
+      });
+    } catch (error) {
+      console.error("Error adding transaction:", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+      });
+    }
+  };
+
+  const onEdit = async (
+    transactionId: string,
+    transaction: TransactionData
+  ) => {
+    try {
+      await updateTransaction(transactionId, transaction);
+      toast({
+        description: "Transaction updated",
+      });
+    } catch (error) {
+      console.error("Error updating transaction:", error);
+      toast({
+        variant: "destructive",
+        title: "Uh oh! Something went wrong.",
+      });
+    }
+  };
+
   const handleEdit = (transaction: Transaction) => {
-    console.log("Edit handler");
     setEditData(transaction);
     setShowSheet(true);
   };
@@ -49,8 +83,8 @@ const ExpensesPage = () => {
         showSheet={showSheet}
         setShowSheet={handleDrawerClose}
         initialData={editData}
-        onAdd={addTransaction}
-        onEdit={updateTransaction}
+        onAdd={onAdd}
+        onEdit={onEdit}
       />
 
       {loading ? (

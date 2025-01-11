@@ -70,7 +70,16 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
             isCreditCardPayment: data.isCreditCardPayment || false,
           };
         });
-        setTransactions(transactionsData);
+        const sortedTransactions = transactionsData.sort((a, b) => {
+          const dateA = new Date(
+            `${a.date?.toISOString().split("T")[0]}T${a.time}`
+          );
+          const dateB = new Date(
+            `${b.date?.toISOString().split("T")[0]}T${b.time}`
+          );
+          return dateB.getTime() - dateA.getTime();
+        });
+        setTransactions(sortedTransactions);
         setLoading(false);
       },
       (error) => {

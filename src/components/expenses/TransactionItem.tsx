@@ -21,7 +21,6 @@ const TransactionItem = ({
   const { toast } = useToast();
 
   const onEditClick = () => {
-    console.log("Edit clicked");
     onEdit(transaction);
   };
 
