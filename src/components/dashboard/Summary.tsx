@@ -80,7 +80,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
             <span className="text-lg text-gray-700">Total Income</span>
           </div>
           <div className="text-xl font-bold text-green-600">
-            ${summary.totalIncome.toFixed(2)}
+            {summary.totalIncome.toFixed(0)}€
           </div>
         </div>
 
@@ -91,7 +91,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
             <span className="text-lg text-gray-700">Total Expenses</span>
           </div>
           <div className="text-xl font-bold text-red-600">
-            ${summary.totalExpenses.toFixed(2)}
+            {summary.totalExpenses.toFixed(0)}€
           </div>
         </div>
 
@@ -110,7 +110,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
               summary.balance >= 0 ? "text-green-600" : "text-red-600"
             }`}
           >
-            ${summary.balance.toFixed(2)}
+            {summary.balance.toFixed(0)}€
           </div>
         </div>
       </div>
@@ -124,7 +124,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
             <span className="text-lg text-gray-700">Savings</span>
           </div>
           <div className="text-xl font-bold text-yellow-600">
-            ${summary.savings.toFixed(2)}
+            {summary.savings.toFixed(0)}€
           </div>
         </div>
 
@@ -135,7 +135,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
             <span className="text-lg text-gray-700">Credit</span>
           </div>
           <div className="text-xl font-bold text-indigo-600">
-            ${summary.credit.toFixed(2)}
+            {summary.credit.toFixed(0)}€
           </div>
         </div>
       </div>
