@@ -9,7 +9,7 @@ import { PlusIcon } from "lucide-react";
 import { Transaction, TransactionData } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 
-const ExpensesPage = () => {
+const TransactionsPage = () => {
   const {
     transactions,
     loading,
@@ -100,4 +100,4 @@ const ExpensesPage = () => {
     </>
   );
 };
-export default ExpensesPage;
+export default TransactionsPage;

@@ -30,15 +30,15 @@ const NavbarLinks = ({ isMobile = false, onCloseMobileMenu = () => {} }) => {
         Dashboard
       </Link>
       <Link
-        href="/main/expenses"
+        href="/main/transactions"
         className={
-          pathName == "/main/expenses"
+          pathName == "/main/transactions"
             ? `${activeLinkStyle}`
             : `${navLinkStyle}`
         }
         onClick={handleClick}
       >
-        Expenses
+        Transactions
       </Link>
       <Link
         href="/main/budget"
