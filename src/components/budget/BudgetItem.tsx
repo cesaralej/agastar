@@ -37,6 +37,11 @@ const BudgetItem = ({
     setIsEdit(!isEdit);
   };
 
+  const handleDiscardChanges = () => {
+    setNewAmount(budget.amount); // Reset to the original budget amount
+    setIsEdit(false);
+  };
+
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setNewAmount(Math.max(0, Number(event.target.value)));
   };
@@ -63,13 +68,24 @@ const BudgetItem = ({
           </h3>
         </div>
         {!noEdit && (
-          <button
-            className="text-blue-500"
-            onClick={handleEditClick}
-            aria-label={isEdit ? "Save budget" : "Edit budget"}
-          >
-            {isEdit ? "Save" : "Edit"}
-          </button>
+          <div className="flex gap-2">
+            {isEdit && (
+              <button
+                className="text-gray-500"
+                onClick={handleDiscardChanges}
+                aria-label="Discard changes"
+              >
+                Cancel
+              </button>
+            )}
+            <button
+              className="text-blue-500"
+              onClick={handleEditClick}
+              aria-label={isEdit ? "Save budget" : "Edit budget"}
+            >
+              {isEdit ? "Save" : "Edit"}
+            </button>
+          </div>
         )}
       </div>
       <div>
