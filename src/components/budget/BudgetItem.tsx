@@ -76,6 +76,7 @@ const BudgetItem = ({
         {isEdit ? (
           <input
             type="number"
+            inputMode="decimal"
             value={newAmount}
             onChange={handleAmountChange}
             className="w-full border rounded-md p-2 mt-2"
