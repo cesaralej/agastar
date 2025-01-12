@@ -7,6 +7,7 @@ interface BudgetItemProps {
   onChange: (budget: Budget) => Promise<void>;
   icon: ReactNode; // Type the icon prop
   color: string; // Type the color prop
+  noEdit?: boolean;
 }
 
 const BudgetItem = ({
@@ -15,6 +16,7 @@ const BudgetItem = ({
   onChange,
   icon,
   color,
+  noEdit,
 }: BudgetItemProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const [newAmount, setNewAmount] = useState(budget.amount);
@@ -60,13 +62,15 @@ const BudgetItem = ({
             {budget.category.charAt(0).toUpperCase() + budget.category.slice(1)}
           </h3>
         </div>
-        <button
-          className="text-blue-500"
-          onClick={handleEditClick}
-          aria-label={isEdit ? "Save budget" : "Edit budget"}
-        >
-          {isEdit ? "Save" : "Edit"}
-        </button>
+        {!noEdit && (
+          <button
+            className="text-blue-500"
+            onClick={handleEditClick}
+            aria-label={isEdit ? "Save budget" : "Edit budget"}
+          >
+            {isEdit ? "Save" : "Edit"}
+          </button>
+        )}
       </div>
       <div>
         {isEdit ? (

@@ -83,6 +83,7 @@ const BudgetList = ({
             onChange={handleBudgetChange}
             icon={categoryData.icon}
             color={categoryData.color}
+            noEdit={categoryData.name === "luxury"}
           />
         );
       })}
