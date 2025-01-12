@@ -19,7 +19,7 @@ const BudgetItem = ({
   noEdit,
 }: BudgetItemProps) => {
   const [isEdit, setIsEdit] = useState(false);
-  const [newAmount, setNewAmount] = useState(budget.amount);
+  const [newAmount, setNewAmount] = useState<string>(budget.amount.toString());
   const remaining = budget.amount - spent;
   const percentageUsed =
     budget.amount > 0
@@ -27,23 +27,28 @@ const BudgetItem = ({
       : 0;
 
   const handleEditClick = async () => {
+    const amountToSave = newAmount === "" ? 0 : Number(newAmount);
     if (isEdit) {
       // Save budget on exit from edit mode
       await onChange({
         ...budget,
-        amount: newAmount, // Update the amount in the budget object
+        amount: amountToSave, // Update the amount in the budget object
       });
     }
     setIsEdit(!isEdit);
   };
 
   const handleDiscardChanges = () => {
-    setNewAmount(budget.amount); // Reset to the original budget amount
+    setNewAmount(budget.amount.toString()); // Reset to the original budget amount
     setIsEdit(false);
   };
 
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setNewAmount(Math.max(0, Number(event.target.value)));
+    const value = event.target.value;
+    if (/^\d*$/.test(value)) {
+      // Allow only numeric values
+      setNewAmount(value);
+    }
   };
 
   const getProgressBarColor = (percentage: number) => {
