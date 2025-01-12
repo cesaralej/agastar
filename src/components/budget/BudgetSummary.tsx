@@ -1,19 +1,18 @@
-const BudgetSummary = ({
-  totalBudget,
-  totalIncome,
-}: {
-  totalBudget: number;
-  totalIncome: number;
-}) => {
-  const exceedsIncome = totalBudget > totalIncome;
-  const remaining = totalIncome - totalBudget;
-  const budgetPercentage = Math.min((totalBudget / totalIncome) * 100, 100);
+import { useTransactions } from "@/context/TransactionContext";
+import { useBudgets } from "@/context/BudgetContext";
+
+const BudgetSummary = () => {
+  const { totalIncome } = useTransactions();
+  const { sumOfBudgets } = useBudgets();
+  const exceedsIncome = sumOfBudgets > totalIncome;
+  const remaining = totalIncome - sumOfBudgets;
+  const budgetPercentage = Math.min((sumOfBudgets / totalIncome) * 100, 100);
   return (
     <div className="mt-4">
       <div className="grid grid-cols-3 md:grid-cols-3 gap-4  mt-4">
         <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">Budgeted</h3>
-          <p className="text-xl font-bold">${totalBudget.toFixed(2)}</p>
+          <p className="text-xl font-bold">${sumOfBudgets.toFixed(2)}</p>
         </div>
         <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">Income</h3>
@@ -43,7 +42,7 @@ const BudgetSummary = ({
 
       <div className="flex justify-between">
         <span className="text-sm">
-          {totalBudget > totalIncome ? "Over Budget" : "Under Budget"}
+          {sumOfBudgets > totalIncome ? "Over Budget" : "Under Budget"}
         </span>
         <span className="text-sm">{`${budgetPercentage.toFixed(1)}%`}</span>
       </div>

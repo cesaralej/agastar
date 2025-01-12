@@ -13,7 +13,7 @@ import {
 import { auth, db } from "../lib/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Transaction, TransactionData } from "../types";
+import { Transaction, TransactionData } from "@/types";
 
 export interface TransactionContextType {
   transactions: Transaction[] | null;
@@ -25,6 +25,8 @@ export interface TransactionContextType {
     updatedTransactionData: Partial<TransactionData>
   ) => Promise<void>;
   deleteTransaction: (transactionId: string) => Promise<void>;
+  totalIncome: number;
+  spentPerCategory: Record<string, number>;
 }
 
 const TransactionContext = createContext<TransactionContextType | null>(null);
@@ -173,6 +175,20 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const totalIncome = (transactions ?? [])
+    .filter((transaction) => transaction.type === "income")
+    .filter((transaction) => transaction.isCreditCardPayment === false)
+    .reduce((acc, transaction) => acc + Number(transaction.amount), 0);
+
+  const spentPerCategory = (transactions ?? [])
+    .filter((transaction) => transaction.type === "expense")
+    .filter((transaction) => transaction.isCreditCardPayment === false)
+    .reduce((acc, transaction) => {
+      acc[transaction.category] =
+        (acc[transaction.category] ?? 0) + Number(transaction.amount);
+      return acc;
+    }, {} as Record<string, number>);
+
   const value = {
     transactions,
     loading,
@@ -180,6 +196,8 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     addTransaction,
     updateTransaction,
     deleteTransaction,
+    totalIncome,
+    spentPerCategory,
   };
 
   return (

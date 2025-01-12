@@ -1,30 +1,86 @@
-import categories from "@/data/categories";
+import categories from "@/data/categoriesv2";
 import BudgetItem from "./BudgetItem";
-import { Category } from "@/types";
+import { Budget, Category } from "@/types";
+import { useBudgets } from "@/context/BudgetContext";
+import { useTransactions } from "@/context/TransactionContext";
+import Spinner from "@/components/Spinner";
 
 const BudgetList = ({
-  budgets,
-  onBudgetChange,
-  spentPerCategory,
+  selectedMonth,
+  selectedYear,
 }: {
-  budgets: { [key: string]: number };
-  onBudgetChange: (category: string, amount: number) => void;
-  spentPerCategory: { [key: string]: number };
+  selectedMonth: number;
+  selectedYear: number;
 }) => {
+  const { budgets: globalBudgets, loading, error, updateBudget } = useBudgets();
+  const { totalIncome, spentPerCategory } = useTransactions();
+
+  const sumOfBudgets = globalBudgets.reduce(
+    (acc, budget) => (budget.category !== "Luxury" ? acc + budget.amount : acc),
+    0
+  );
+
+  const defaults = categories
+    .filter(
+      (category) => category.name !== "other" && category.name !== "salary"
+    )
+    .map((category) => {
+      if (category.name === "luxury") {
+        return {
+          id: `${category.name}-${selectedMonth}-${selectedYear}`,
+          category: category.name,
+          amount: totalIncome - sumOfBudgets,
+          month: selectedMonth,
+          year: selectedYear,
+        };
+      }
+
+      const existingBudget = globalBudgets.find(
+        (budget) => budget.category === category.name
+      );
+
+      return (
+        existingBudget || {
+          id: `${category.name}-${selectedMonth}-${selectedYear}`,
+          category: category.name,
+          amount: 0,
+          month: selectedMonth,
+          year: selectedYear,
+        }
+      );
+    });
+
+  const handleBudgetChange = async (updatedBudget: Budget) => {
+    await updateBudget(updatedBudget);
+    defaults.forEach((budget) => {
+      if (budget.category === updatedBudget.category) {
+        budget.amount = updatedBudget.amount;
+      }
+    });
+  };
+
+  if (loading) {
+    return <Spinner loading={loading} />;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
-      {Object.keys(categories).map((category) => {
-        const categoryData = categories[
-          category as keyof typeof categories
-        ] as Category;
+      {defaults.map((budget) => {
+        const categoryData = categories.find(
+          (category) => category.name === budget.category
+        ) as Category;
+        //console.log("BP categoryData: ", categoryData);
 
         return (
           <BudgetItem
-            key={category}
-            category={category}
-            amount={budgets[category] ?? 0}
-            spent={spentPerCategory?.[category] || 0}
-            onChange={(amount) => onBudgetChange(category, amount)}
+            key={budget.id || `${budget.category}`}
+            budget={budget} // Pass the entire budget object
+            spent={spentPerCategory[budget.category] || 0}
+            onChange={handleBudgetChange}
             icon={categoryData.icon}
             color={categoryData.color}
           />

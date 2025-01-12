@@ -1,34 +1,42 @@
 import { ReactNode, useState } from "react";
+import { Budget } from "@/types";
 
 interface BudgetItemProps {
-  category: string;
-  amount: number;
+  budget: Budget;
   spent: number;
-  onChange: (amount: number) => void;
+  onChange: (budget: Budget) => Promise<void>;
   icon: ReactNode; // Type the icon prop
   color: string; // Type the color prop
 }
 
 const BudgetItem = ({
-  category,
-  amount,
+  budget,
   spent,
   onChange,
   icon,
   color,
 }: BudgetItemProps) => {
   const [isEdit, setIsEdit] = useState(false);
-  const remaining = amount - spent;
+  const [newAmount, setNewAmount] = useState(budget.amount);
+  const remaining = budget.amount - spent;
   const percentageUsed =
-    amount > 0 ? Math.min(Math.round((spent / amount) * 100), 100) : 0;
+    budget.amount > 0
+      ? Math.min(Math.round((spent / budget.amount) * 100), 100)
+      : 0;
 
-  const handleEditClick = () => {
+  const handleEditClick = async () => {
+    if (isEdit) {
+      // Save budget on exit from edit mode
+      await onChange({
+        ...budget,
+        amount: newAmount, // Update the amount in the budget object
+      });
+    }
     setIsEdit(!isEdit);
   };
 
   const handleAmountChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const newAmount = Math.max(0, Number(event.target.value));
-    onChange(newAmount);
+    setNewAmount(Math.max(0, Number(event.target.value)));
   };
 
   const getProgressBarColor = (percentage: number) => {
@@ -49,7 +57,7 @@ const BudgetItem = ({
             {icon}
           </div>
           <h3 className="text-lg font-bold">
-            {category.charAt(0).toUpperCase() + category.slice(1)}
+            {budget.category.charAt(0).toUpperCase() + budget.category.slice(1)}
           </h3>
         </div>
         <button
@@ -64,14 +72,14 @@ const BudgetItem = ({
         {isEdit ? (
           <input
             type="number"
-            value={amount}
+            value={newAmount}
             onChange={handleAmountChange}
             className="w-full border rounded-md p-2 mt-2"
             placeholder="Budget Amount"
           />
         ) : (
           <>
-            <p className="text-sm text-gray-500">Budget: ${amount}</p>
+            <p className="text-sm text-gray-500">Budget: ${budget.amount}</p>
             <div className="flex justify-between items-center">
               <div>
                 <p className="text-sm text-gray-500">

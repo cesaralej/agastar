@@ -1,4 +1,5 @@
 import { CategoryType } from "@/data/categoriesv2";
+import { FieldValue } from "firebase/firestore";
 export const ACCOUNTS = ["credit", "savings"] as const;
 export const TYPES = ["income", "expense"] as const;
 export type AccountType = (typeof ACCOUNTS)[number];
@@ -25,4 +26,13 @@ export interface Category {
   name: string;
   icon: React.JSX.Element;
   color: string;
+}
+
+export interface Budget {
+  id: string;
+  category: string;
+  month: number;
+  year: number;
+  amount: number;
+  lastUpdated?: Date | FieldValue;
 }

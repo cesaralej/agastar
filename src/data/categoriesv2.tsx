@@ -13,10 +13,10 @@ import { IoSparkles } from "react-icons/io5";
 // Define categories as an array of objects
 export const categories = [
   {
-    name: "groceries",
-    label: "Groceries",
-    icon: <FaShoppingCart />,
-    color: "bg-green-100",
+    name: "investment",
+    label: "Investment",
+    icon: <FaHome />,
+    color: "bg-red-100",
   },
   {
     name: "utilities",
@@ -24,6 +24,19 @@ export const categories = [
     icon: <FaLightbulb />,
     color: "bg-blue-100",
   },
+  {
+    name: "groceries",
+    label: "Groceries",
+    icon: <FaShoppingCart />,
+    color: "bg-green-100",
+  },
+  {
+    name: "transportation",
+    label: "Transportation",
+    icon: <FaTaxi />,
+    color: "bg-yellow-100",
+  },
+
   {
     name: "food",
     label: "Food",
@@ -42,18 +55,7 @@ export const categories = [
     icon: <IoSparkles />,
     color: "bg-purple-100",
   },
-  {
-    name: "investment",
-    label: "Investment",
-    icon: <FaHome />,
-    color: "bg-red-100",
-  },
-  {
-    name: "transportation",
-    label: "Transportation",
-    icon: <FaTaxi />,
-    color: "bg-yellow-100",
-  },
+
   {
     name: "other",
     label: "Other",
