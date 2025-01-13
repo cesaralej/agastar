@@ -1,27 +1,32 @@
 import RecurringItem from "./RecurringItem";
+import { Recurring } from "@/types";
+import { useRecurrings } from "@/context/RecurringContext";
 
-interface Expense {
-  id: string;
-  name: string;
-  dueDate: Date;
-  amount: number;
-}
+const RecurringList = ({
+  onEdit,
+}: {
+  onEdit: (recurring: Recurring) => void;
+}) => {
+  const { recurrings, loading, error } = useRecurrings();
+  if (!recurrings || recurrings.length === 0) {
+    return <div>No recurring expenses found.</div>;
+  }
 
-interface RecurringListProps {
-  expenses: Expense[];
-  onEdit: (id: string) => void;
-  onDelete: (id: string) => void;
-}
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
-const RecurringList = ({ expenses, onEdit, onDelete }: RecurringListProps) => {
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
   return (
-    <div className="mt-4">
-      {expenses.map((expense: Expense) => (
+    <div className="mt-4 flex flex-col gap-4">
+      {recurrings.map((recurring: Recurring) => (
         <RecurringItem
-          key={expense.id}
-          expense={expense}
-          onEdit={() => onEdit(expense.id)}
-          onDelete={() => onDelete(expense.id)}
+          key={recurring.id}
+          recurring={recurring}
+          onEdit={onEdit}
         />
       ))}
     </div>
