@@ -64,14 +64,14 @@ const TransactionItem = ({
     transaction.type === "income" ? "text-green-500" : "text-red-500"; // Conditional amount color
   const cardStyle =
     transaction.type === "income"
-      ? `bg-white border-green-500/30 border-2 hover:bg-green-50`
+      ? `border-green-500/30 border-2 hover:bg-green-50`
       : transaction.isCreditCardPayment
-      ? `bg-white border-purple-500/30 border-2 hover:bg-purple-50`
-      : `bg-white hover:bg-gray-50 hover:border-gray-300`;
+      ? `border-purple-500/30 border-2 hover:bg-purple-50`
+      : `hover:bg-gray-50 hover:border-gray-300`;
 
   return (
     <div
-      className={`rounded-lg shadow-md p-4  ${cardStyle} hover:shadow-lg hover:scale-101 transition-all duration-200`}
+      className={`rounded-lg shadow-md p-4 bg-white ${cardStyle} hover:shadow-lg hover:scale-101 transition-all duration-200`}
       onMouseEnter={() => setIsHovering(true)}
       onMouseLeave={() => setIsHovering(false)}
     >
