@@ -3,6 +3,7 @@ import BudgetItem from "./BudgetItem";
 import { Budget, Category } from "@/types";
 import { useBudgets } from "@/context/BudgetContext";
 import { useTransactions } from "@/context/TransactionContext";
+import { useRecurrings } from "@/context/RecurringContext";
 import Spinner from "@/components/Spinner";
 
 const BudgetList = ({
@@ -14,6 +15,7 @@ const BudgetList = ({
 }) => {
   const { budgets: globalBudgets, loading, error, updateBudget } = useBudgets();
   const { totalIncome, spentPerCategory } = useTransactions();
+  const { totalRecurring } = useRecurrings();
 
   const sumOfBudgets = globalBudgets.reduce(
     (acc, budget) => (budget.category !== "Luxury" ? acc + budget.amount : acc),
@@ -29,7 +31,15 @@ const BudgetList = ({
         return {
           id: `${category.name}-${selectedMonth}-${selectedYear}`,
           category: category.name,
-          amount: totalIncome - sumOfBudgets,
+          amount: totalIncome - sumOfBudgets - totalRecurring,
+          month: selectedMonth,
+          year: selectedYear,
+        };
+      } else if (category.name === "utilities") {
+        return {
+          id: `${category.name}-${selectedMonth}-${selectedYear}`,
+          category: category.name,
+          amount: totalRecurring,
           month: selectedMonth,
           year: selectedYear,
         };
@@ -83,7 +93,10 @@ const BudgetList = ({
             onChange={handleBudgetChange}
             icon={categoryData.icon}
             color={categoryData.color}
-            noEdit={categoryData.name === "luxury"}
+            noEdit={
+              categoryData.name === "luxury" ||
+              categoryData.name === "utilities"
+            }
           />
         );
       })}

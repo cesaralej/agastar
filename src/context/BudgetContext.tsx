@@ -96,7 +96,10 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   };
 
   const sumOfBudgets = budgets.reduce(
-    (acc, budget) => (budget.category !== "Luxury" ? acc + budget.amount : acc),
+    (acc, budget) =>
+      budget.category !== "luxury" && budget.category !== "utilities"
+        ? acc + budget.amount
+        : acc,
     0
   );
 
