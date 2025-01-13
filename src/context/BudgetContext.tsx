@@ -35,7 +35,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   const [error, setError] = useState<FirestoreError | null>(null);
 
   const fetchBudgets = async (month: number, year: number) => {
-    console.log("BC fetching budgets for ", month, year);
+    //console.log("BC fetching budgets for ", month, year);
     setLoading(true);
     setError(null);
     if (!user) {
@@ -89,7 +89,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         }
       });
       console.log(`Budget ${budget.id} updated successfully.`);
-      console.log("BC Budgets: ", budgets);
+      //console.log("BC Budgets: ", budgets);
     } catch (error) {
       console.error("Error updating budget:", error);
     }
@@ -101,7 +101,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   );
 
   useEffect(() => {
-    console.log("BC useEffect");
+    //console.log("BC useEffect");
     const today = new Date();
     fetchBudgets(today.getMonth(), today.getFullYear());
   }, [user]);

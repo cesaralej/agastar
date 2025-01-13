@@ -36,3 +36,16 @@ export interface Budget {
   amount: number;
   lastUpdated?: Date | FieldValue;
 }
+
+export interface RecurringData {
+  description: string;
+  amount: number;
+  dueDate: number;
+  account: AccountType;
+  lastPaymentDate?: Date;
+  lastUpdated?: Date | FieldValue;
+}
+
+export interface Recurring extends RecurringData {
+  id: string;
+}
