@@ -207,6 +207,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
       );
       await deleteDoc(transactionDocRef);
       console.log("Transaction deleted with ID: ", transactionId);
+      //Figure out what to do if it is a recurring expense
     } catch (error) {
       console.error("Error deleting transaction:", error);
     }

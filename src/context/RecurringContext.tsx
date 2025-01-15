@@ -66,8 +66,11 @@ export const RecurringProvider: React.FC<{ children: React.ReactNode }> = ({
             lastUpdated: data.lastUpdated,
           };
         });
+        const sortedRecurrings = recurringsData.sort(
+          (a, b) => a.dueDate - b.dueDate
+        );
 
-        setRecurrings(recurringsData);
+        setRecurrings(sortedRecurrings);
         setLoading(false);
       },
       (error) => {
