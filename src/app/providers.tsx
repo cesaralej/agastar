@@ -8,11 +8,11 @@ const TransactionProviderWrapper: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   return (
-    <TransactionProvider>
-      <BudgetProvider>
-        <RecurringProvider>{children}</RecurringProvider>
-      </BudgetProvider>
-    </TransactionProvider>
+    <RecurringProvider>
+      <TransactionProvider>
+        <BudgetProvider>{children}</BudgetProvider>
+      </TransactionProvider>
+    </RecurringProvider>
   );
 };
 

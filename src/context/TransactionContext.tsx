@@ -14,6 +14,7 @@ import { auth, db } from "../lib/firebase";
 import { doc, updateDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Transaction, TransactionData } from "@/types";
+import { useRecurrings } from "./RecurringContext";
 
 export interface TransactionContextType {
   transactions: Transaction[] | null;
@@ -38,6 +39,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
   const [transactions, setTransactions] = useState<Transaction[] | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<FirestoreError | null>(null);
+  const { recurrings, updateRecurring } = useRecurrings();
 
   useEffect(() => {
     if (loadingUser || !user) {
@@ -93,6 +95,25 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     return () => unsubscribe();
   }, [user, loadingUser]);
 
+  const checkRecurring = async (
+    category: string,
+    description: string,
+    dateTime: Date
+  ) => {
+    if (category === "utilities") {
+      const recurring = recurrings?.find(
+        (recurring) => recurring.description === description
+      );
+      if (recurring) {
+        await updateRecurring(recurring.id, {
+          ...recurring,
+          lastPaymentDate: dateTime,
+          lastUpdated: new Date(),
+        });
+      }
+    }
+  };
+
   const addTransaction = async (transactionData: TransactionData) => {
     if (!user) {
       console.error("User not logged in. Cannot add transaction.");
@@ -118,6 +139,11 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         date: dateTime,
       });
       console.log("Document written with ID: ", docRef.id);
+      checkRecurring(
+        transactionData.category,
+        transactionData.description,
+        dateTime
+      );
     } catch (error) {
       console.error("Error adding transaction:", error);
     }
@@ -143,6 +169,17 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
       ); // Get doc reference
       await updateDoc(transactionDocRef, updatedTransactionData); // Update the document
       console.log("Transaction updated with ID: ", transactionId);
+      if (
+        updatedTransactionData.category &&
+        updatedTransactionData.description &&
+        updatedTransactionData.date
+      ) {
+        checkRecurring(
+          updatedTransactionData.category,
+          updatedTransactionData.description,
+          updatedTransactionData.date
+        );
+      }
     } catch (error) {
       console.error("Error updating transaction:", error);
     }

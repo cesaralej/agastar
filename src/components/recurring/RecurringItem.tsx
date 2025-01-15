@@ -3,6 +3,7 @@ import { useRecurrings } from "@/context/RecurringContext";
 import { Recurring } from "@/types";
 import { HiPencil, HiTrash } from "react-icons/hi";
 import { FaCreditCard, FaWallet } from "react-icons/fa";
+import { Timestamp } from "firebase/firestore";
 
 interface RecurringItemProps {
   recurring: Recurring;
@@ -21,17 +22,27 @@ const RecurringItem = ({ recurring, onEdit }: RecurringItemProps) => {
   useEffect(() => {
     const today = new Date();
     const currentDay = today.getDate();
-
     const difference = recurring.dueDate - currentDay;
+    let lastPaymentDate: Date | null = null;
 
-    if (difference === 0) {
+    if (recurring.lastPaymentDate) {
+      lastPaymentDate =
+        recurring.lastPaymentDate instanceof Timestamp
+          ? recurring.lastPaymentDate.toDate()
+          : new Date(recurring.lastPaymentDate);
+    }
+
+    // Check if last payment date is this month
+    if (lastPaymentDate && lastPaymentDate.getMonth() === today.getMonth()) {
+      setDueStatus("Paid this month");
+    } else if (difference === 0) {
       setDueStatus("Due today");
     } else if (difference > 0) {
       setDueStatus(`Due in ${difference} days`);
     } else {
       setDueStatus(`Overdue by ${Math.abs(difference)} days`);
     }
-  }, [recurring.dueDate]);
+  }, [recurring.dueDate, recurring.lastPaymentDate]);
 
   const truncateText = ({
     text,
@@ -62,14 +73,18 @@ const RecurringItem = ({ recurring, onEdit }: RecurringItemProps) => {
               <span className="text-lg font-semibold block">
                 {truncateText({ text: recurring.description, limit: 20 })}
               </span>{" "}
-              <div className="flex items-center gap-2 text-sm text-gray-600">
+              <div
+                className={`flex items-center gap-2 text-sm text-gray-600 ${
+                  dueStatus.includes("Paid") ? "text-green-500" : ""
+                } ${dueStatus.includes("Overdue") ? "text-red-500" : ""}`}
+              >
                 {accountIcon}
                 <p
                   className={`text-sm ${
                     dueStatus.includes("Overdue")
                       ? "text-red-500"
                       : "text-gray-500"
-                  }`}
+                  } ${dueStatus.includes("Paid") ? "text-green-500" : ""}`}
                 >
                   {dueStatus}
                 </p>
