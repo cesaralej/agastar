@@ -68,7 +68,6 @@ export const RecurringProvider: React.FC<{ children: React.ReactNode }> = ({
         });
 
         setRecurrings(recurringsData);
-        console.log("RC Recurrings updated:", recurringsData);
         setLoading(false);
       },
       (error) => {

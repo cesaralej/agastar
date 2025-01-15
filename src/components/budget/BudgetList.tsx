@@ -28,6 +28,7 @@ const BudgetList = ({
     )
     .map((category) => {
       if (category.name === "luxury") {
+        console.log(`BP: ${totalIncome} - ${sumOfBudgets} - ${totalRecurring}`);
         return {
           id: `${category.name}-${selectedMonth}-${selectedYear}`,
           category: category.name,

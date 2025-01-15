@@ -24,7 +24,7 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
 
   useEffect(() => {
     const checkAuth = () => {
-      console.log("ML useEffect Checking auth");
+      //console.log("ML useEffect Checking auth");
       if (user) {
         setIsUserValid(true);
         //console.log("This is the logged in user", user);
