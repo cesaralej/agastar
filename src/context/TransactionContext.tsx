@@ -177,7 +177,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         checkRecurring(
           updatedTransactionData.category,
           updatedTransactionData.description,
-          updatedTransactionData.date
+          updatedTransactionData.effectiveDate || updatedTransactionData.date
         );
       }
     } catch (error) {
