@@ -65,14 +65,8 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
   );
 
   return (
-    <div className=" bg-white shadow-lg rounded-lg p-6 mb-6">
-      {/* Summary Title */}
-      <h1 className="text-3xl font-semibold text-center text-gray-800 mb-6">
-        Summary
-      </h1>
-
-      {/* Income, Expenses, Balance Section */}
-      <div className="space-y-4 mb-6">
+    <>
+      <div className=" bg-white shadow-lg rounded-lg p-6 mb-6">
         {/* Total Income */}
         <div className="flex justify-between items-center py-4 border-b">
           <div className="flex items-center space-x-2">
@@ -96,7 +90,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
         </div>
 
         {/* Balance */}
-        <div className="flex justify-between items-center py-4 border-b">
+        <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-2">
             <FaArrowUp
               className={`text-xl ${
@@ -116,7 +110,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
       </div>
 
       {/* Savings and Credit Section */}
-      <div className="space-y-4">
+      <div className=" bg-white shadow-lg rounded-lg p-6 mb-6">
         {/* Savings */}
         <div className="flex justify-between items-center py-4 border-b">
           <div className="flex items-center space-x-2">
@@ -139,7 +133,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
           </div>
         </div>
       </div>
-    </div>
+    </>
   );
 };
 
