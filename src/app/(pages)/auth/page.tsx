@@ -38,7 +38,7 @@ const AuthPage = () => {
   useEffect(() => {
     //console.log("Login page use effect:", user);
     if (user || signInUser || googleUser || registeredUser) {
-      router.push("/main/dashboard"); // Redirect to home if user is already logged in
+      router.push("/dashboard"); // Redirect to home if user is already logged in
     }
   }, [user, googleUser, router, registeredUser, signInUser]);
 
@@ -59,7 +59,7 @@ const AuthPage = () => {
           loginError.message
         );
       } else {
-        router.push("/main/dashboard");
+        router.push("/dashboard");
       }
     } catch (error) {
       if (error instanceof Error) {
@@ -84,7 +84,7 @@ const AuthPage = () => {
     createUserWithEmailAndPassword(email, password)
       .then((userCredential) => {
         if (userCredential) {
-          router.push("/main/dashboard");
+          router.push("/dashboard");
         }
       })
       .catch((error: AuthError) => {
@@ -100,7 +100,7 @@ const AuthPage = () => {
   const onGoogleSignIn = async () => {
     try {
       await signInWithGoogle();
-      router.push("/main/dashboard"); // Redirect to home programmatically after success
+      router.push("/dashboard"); // Redirect to home programmatically after success
     } catch (error) {
       if (error instanceof Error) {
         console.log("An unknown error occurred");
@@ -114,7 +114,7 @@ const AuthPage = () => {
 
   //There is an issue here
   if (user || signInUser || googleUser || registeredUser) {
-    router.replace("/main/dashboard");
+    router.replace("/dashboard");
     return null;
   }
 
