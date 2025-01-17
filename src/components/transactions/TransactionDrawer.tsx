@@ -8,25 +8,18 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import NewTransaction from "./NewTransaction";
 
-import { Transaction, TransactionData } from "@/types";
+import { Transaction } from "@/types";
 
 const TransactionDrawer = ({
   isEdit,
   showSheet,
   setShowSheet,
   initialData,
-  onAdd,
-  onEdit,
 }: {
   isEdit?: boolean;
   showSheet: boolean;
   setShowSheet: (show: boolean) => void;
   initialData?: Partial<Transaction> | null;
-  onAdd: (transaction: TransactionData) => Promise<void>;
-  onEdit: (
-    transactionId: string,
-    transaction: TransactionData
-  ) => Promise<void>;
 }) => {
   return (
     <Drawer open={showSheet} onOpenChange={setShowSheet}>
@@ -42,8 +35,6 @@ const TransactionDrawer = ({
               setShowSheet={setShowSheet}
               initialData={initialData}
               isEdit={isEdit}
-              onAdd={onAdd}
-              onEdit={onEdit}
             />
           </div>
         </ScrollArea>

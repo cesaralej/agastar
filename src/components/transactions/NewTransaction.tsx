@@ -1,4 +1,6 @@
 import { useState, useEffect } from "react";
+import { useTransactions } from "@/context/TransactionContext";
+import { useToast } from "@/hooks/use-toast";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -55,20 +57,15 @@ const NewTransaction = ({
   setShowSheet,
   initialData = null,
   isEdit = false,
-  onAdd,
-  onEdit,
 }: {
   setShowSheet: (show: boolean) => void;
   initialData?: Partial<Transaction> | null;
   isEdit?: boolean;
-  onAdd: (transaction: TransactionData) => Promise<void>;
-  onEdit: (
-    transactionId: string,
-    transaction: TransactionData
-  ) => Promise<void>;
 }) => {
+  const { addTransaction, updateTransaction } = useTransactions();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showComments, setShowComments] = useState(false);
+  const { toast } = useToast();
   const form = useForm<TransactionData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -124,19 +121,41 @@ const NewTransaction = ({
     }
   }, [type, form, isEdit]);
 
-  const handleSubmit = (data: TransactionData) => {
+  const handleSubmit = async (data: TransactionData) => {
     setIsSubmitting(true);
 
     if (isEdit) {
       console.log("Editing transaction:", data);
       if (initialData?.id) {
-        onEdit(initialData.id, data);
+        try {
+          await updateTransaction(initialData.id, data);
+          toast({
+            description: "Transaction updated",
+          });
+        } catch (error) {
+          console.error("Error updating transaction:", error);
+          toast({
+            variant: "destructive",
+            title: "Uh oh! Something went wrong.",
+          });
+        }
       } else {
         console.error("No transaction ID found for editing");
       }
     } else {
       console.log("Adding new transaction:", data);
-      onAdd(data);
+      try {
+        await addTransaction(data);
+        toast({
+          description: "Transaction added",
+        });
+      } catch (error) {
+        console.error("Error adding transaction:", error);
+        toast({
+          variant: "destructive",
+          title: "Uh oh! Something went wrong.",
+        });
+      }
     }
     setShowSheet(false);
 

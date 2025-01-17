@@ -1,17 +1,16 @@
+import { useTransactions } from "@/context/TransactionContext";
 import TransactionItem from "./TransactionItem";
 import TransactionFilter from "./TransactionFilter";
+import Spinner from "@/components/Spinner";
 import { Transaction } from "@/types";
 
 const TransactionList = ({
-  transactions = [] as Transaction[],
-  error,
   onEdit,
 }: {
-  transactions: Transaction[];
-  error?: { message: string };
   onEdit: (transaction: Transaction) => void;
 }) => {
-  let filteredTransactions = transactions;
+  const { transactions, loading, error } = useTransactions();
+  let filteredTransactions = transactions || [];
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -19,7 +18,7 @@ const TransactionList = ({
 
   const handleFilterChange = (filter: string | null) => {
     if (filter) {
-      filteredTransactions = transactions.filter(
+      filteredTransactions = filteredTransactions.filter(
         (transaction) => transaction.category === filter
       );
     }
@@ -29,11 +28,15 @@ const TransactionList = ({
     return (
       <div className="container mx-auto mt-4">
         <TransactionFilter onFilterChange={handleFilterChange} />
-        <div className="container mx-auto px-4 py-8">
-          <p className="text-gray-500 text-center">
-            No transactions yet. Add some to see them here.
-          </p>
-        </div>
+        {loading ? (
+          <Spinner loading={loading} />
+        ) : (
+          <div className="container mx-auto px-4 py-8">
+            <p className="text-gray-500 text-center">
+              No transactions yet. Add some to see them here.
+            </p>
+          </div>
+        )}
       </div>
     );
   }
@@ -55,21 +58,29 @@ const TransactionList = ({
   return (
     <div className="container mx-auto mt-4">
       <TransactionFilter onFilterChange={handleFilterChange} />
-      {Object.entries(groupedTransactions).map(([date, transactionsByDate]) => (
-        <div key={date}>
-          <h3 className="text-md text-gray-500 font-semibold mb-2">{date}</h3>
-          <div className="flex flex-col gap-4">
-            {transactionsByDate.map((transaction) => (
-              <TransactionItem
-                key={transaction.id}
-                transaction={transaction}
-                onEdit={onEdit}
-              />
-            ))}
-            <hr className="my-4 border-gray-300" />
-          </div>
-        </div>
-      ))}
+      {loading ? (
+        <Spinner loading={loading} />
+      ) : (
+        Object.entries(groupedTransactions).map(
+          ([date, transactionsByDate]: [string, Transaction[]]) => (
+            <div key={date}>
+              <h3 className="text-md text-gray-500 font-semibold mb-2">
+                {date}
+              </h3>
+              <div className="flex flex-col gap-4">
+                {transactionsByDate.map((transaction: Transaction) => (
+                  <TransactionItem
+                    key={transaction.id}
+                    transaction={transaction}
+                    onEdit={onEdit}
+                  />
+                ))}
+                <hr className="my-4 border-gray-300" />
+              </div>
+            </div>
+          )
+        )
+      )}
     </div>
   );
 };
