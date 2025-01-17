@@ -40,6 +40,7 @@ const BudgetPage = () => {
 
   return (
     <>
+      <h2 className="text-2xl font-semibold mb-4 mt-4">Budget</h2>
       <div className="flex justify-between items-center mb-4">
         <div className="flex gap-4 ">
           <select

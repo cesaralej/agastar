@@ -39,7 +39,7 @@ const TransactionsPage = () => {
         setShowSheet={handleDrawerClose}
         initialData={editData}
       />
-      <h2 className="text-2xl font-semibold mb-4">Transaction List</h2>
+      <h2 className="text-2xl font-semibold mb-4 mt-4">Transaction List</h2>
 
       <TransactionList onEdit={handleEdit} />
     </>
