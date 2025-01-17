@@ -28,6 +28,10 @@ export interface TransactionContextType {
   deleteTransaction: (transactionId: string) => Promise<void>;
   totalIncome: number;
   spentPerCategory: Record<string, number>;
+  spentPerYearMonthCategory: Record<
+    number,
+    Record<number, Record<string, number>>
+  >;
 }
 
 const TransactionContext = createContext<TransactionContextType | null>(null);
@@ -172,12 +176,12 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
       if (
         updatedTransactionData.category &&
         updatedTransactionData.description &&
-        updatedTransactionData.date
+        updatedTransactionData.effectiveDate
       ) {
         checkRecurring(
           updatedTransactionData.category,
           updatedTransactionData.description,
-          updatedTransactionData.effectiveDate || updatedTransactionData.date
+          updatedTransactionData.effectiveDate
         );
       }
     } catch (error) {
@@ -227,6 +231,30 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
       return acc;
     }, {} as Record<string, number>);
 
+  const spentPerYearMonthCategory = (transactions ?? [])
+    .filter((transaction) => transaction.type === "expense")
+    .filter((transaction) => transaction.isCreditCardPayment === false)
+    .reduce((acc, transaction) => {
+      const year = new Date(transaction.effectiveDate).getFullYear();
+      const month = new Date(transaction.effectiveDate).getMonth();
+      const category = transaction.category;
+
+      // Initialize the structure if it doesn't exist
+      if (!acc[year]) {
+        acc[year] = {};
+      }
+      if (!acc[year][month]) {
+        acc[year][month] = {};
+      }
+      if (!acc[year][month][category]) {
+        acc[year][month][category] = 0;
+      }
+
+      // Add the transaction amount
+      acc[year][month][category] += Number(transaction.amount);
+      return acc;
+    }, {} as Record<number, Record<number, Record<string, number>>>);
+
   const value = {
     transactions,
     loading,
@@ -236,6 +264,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     deleteTransaction,
     totalIncome,
     spentPerCategory,
+    spentPerYearMonthCategory,
   };
 
   return (

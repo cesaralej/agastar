@@ -1,4 +1,3 @@
-import { useState } from "react";
 import TransactionItem from "./TransactionItem";
 import TransactionFilter from "./TransactionFilter";
 import { Transaction } from "@/types";
@@ -14,8 +13,7 @@ const TransactionList = ({
   onEdit: (transaction: Transaction) => void;
   onDelete: (id: string) => Promise<void>;
 }) => {
-  const [filteredTransactions, setFilteredTransactions] =
-    useState(transactions);
+  let filteredTransactions = transactions;
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -23,11 +21,9 @@ const TransactionList = ({
 
   const handleFilterChange = (filter: string | null) => {
     if (filter) {
-      setFilteredTransactions(
-        transactions.filter((transaction) => transaction.category === filter)
+      filteredTransactions = transactions.filter(
+        (transaction) => transaction.category === filter
       );
-    } else {
-      setFilteredTransactions(transactions); // Show all transactions when filter is null
     }
   };
 

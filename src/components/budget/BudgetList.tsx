@@ -14,7 +14,7 @@ const BudgetList = ({
   selectedYear: number;
 }) => {
   const { budgets: globalBudgets, loading, error, updateBudget } = useBudgets();
-  const { totalIncome, spentPerCategory } = useTransactions();
+  const { totalIncome, spentPerYearMonthCategory } = useTransactions();
   const { totalRecurring } = useRecurrings();
 
   const sumOfBudgets = globalBudgets.reduce(
@@ -90,7 +90,11 @@ const BudgetList = ({
           <BudgetItem
             key={budget.id || `${budget.category}`}
             budget={budget} // Pass the entire budget object
-            spent={spentPerCategory[budget.category] || 0}
+            spent={
+              spentPerYearMonthCategory[selectedYear]?.[selectedMonth]?.[
+                budget.category
+              ] || 0
+            }
             onChange={handleBudgetChange}
             icon={categoryData.icon}
             color={categoryData.color}

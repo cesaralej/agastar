@@ -8,7 +8,7 @@ export type TypeCategory = (typeof TYPES)[number];
 export interface TransactionData {
   amount: string;
   date: Date;
-  effectiveDate?: Date;
+  effectiveDate: Date;
   time: string;
   description: string;
   category: CategoryType;
