@@ -1,36 +1,49 @@
+import { useState } from "react";
 import TransactionItem from "./TransactionItem";
+import TransactionFilter from "./TransactionFilter";
 import { Transaction } from "@/types";
 
 const TransactionList = ({
-  isHome = false,
   transactions = [] as Transaction[],
   error,
   onEdit,
   onDelete,
 }: {
-  isHome?: boolean;
   transactions: Transaction[];
   error?: { message: string };
   onEdit: (transaction: Transaction) => void;
   onDelete: (id: string) => Promise<void>;
 }) => {
+  const [filteredTransactions, setFilteredTransactions] =
+    useState(transactions);
+
   if (error) {
     return <div>Error: {error.message}</div>;
   }
 
-  if (!transactions || transactions.length === 0) {
+  const handleFilterChange = (filter: string | null) => {
+    if (filter) {
+      setFilteredTransactions(
+        transactions.filter((transaction) => transaction.category === filter)
+      );
+    } else {
+      setFilteredTransactions(transactions); // Show all transactions when filter is null
+    }
+  };
+
+  if (!filteredTransactions || filteredTransactions.length === 0) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <p className="text-gray-500 text-center">
-          No transactions yet. Add some to see them here.
-        </p>
+      <div className="container mx-auto mt-4">
+        <TransactionFilter onFilterChange={handleFilterChange} />
+        <div className="container mx-auto px-4 py-8">
+          <p className="text-gray-500 text-center">
+            No transactions yet. Add some to see them here.
+          </p>
+        </div>
       </div>
     );
   }
 
-  const filteredTransactions = isHome ? transactions.slice(0, 3) : transactions;
-
-  // Group transactions by date
   const groupedTransactions = filteredTransactions.reduce<
     Record<string, Transaction[]>
   >((acc, transaction) => {
@@ -47,7 +60,7 @@ const TransactionList = ({
 
   return (
     <div className="container mx-auto mt-4">
-      <h2 className="text-2xl font-semibold mb-4">Transaction List</h2>
+      <TransactionFilter onFilterChange={handleFilterChange} />
       {Object.entries(groupedTransactions).map(([date, transactionsByDate]) => (
         <div key={date}>
           <h3 className="text-md text-gray-500 font-semibold mb-2">{date}</h3>

@@ -57,19 +57,19 @@ export const categories = [
   },
 
   {
-    name: "other",
-    label: "Other",
-    icon: <FaCoins />,
-    color: "bg-indigo-50",
-  },
-  {
     name: "salary",
     label: "Salary",
     icon: <FaSackDollar />,
     color: "bg-green-100",
   },
+  {
+    name: "other",
+    label: "Other",
+    icon: <FaCoins />,
+    color: "bg-indigo-50",
+  },
 ] as const;
 
-export type CategoryType = (typeof categories)[number]["name"];
+export type CategoryType = (typeof categories)[number]["name"] | "";
 
 export default categories;
