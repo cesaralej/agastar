@@ -6,12 +6,10 @@ const TransactionList = ({
   transactions = [] as Transaction[],
   error,
   onEdit,
-  onDelete,
 }: {
   transactions: Transaction[];
   error?: { message: string };
   onEdit: (transaction: Transaction) => void;
-  onDelete: (id: string) => Promise<void>;
 }) => {
   let filteredTransactions = transactions;
 
@@ -66,7 +64,6 @@ const TransactionList = ({
                 key={transaction.id}
                 transaction={transaction}
                 onEdit={onEdit}
-                onDelete={onDelete}
               />
             ))}
             <hr className="my-4 border-gray-300" />

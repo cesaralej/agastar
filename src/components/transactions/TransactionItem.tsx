@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useTransactions } from "@/context/TransactionContext";
 import categories from "@/data/categories";
 import { HiPlusSm, HiMinusSm, HiPencil, HiTrash } from "react-icons/hi";
 import { FaCreditCard, FaWallet, FaCoins } from "react-icons/fa";
@@ -11,12 +12,11 @@ type CategoryKey = keyof typeof categories;
 const TransactionItem = ({
   transaction,
   onEdit,
-  onDelete,
 }: {
   transaction: Transaction;
   onEdit: (transaction: Transaction) => void;
-  onDelete: (id: string) => Promise<void>;
 }) => {
+  const { deleteTransaction } = useTransactions();
   const [isHovering, setIsHovering] = useState(false);
   const { toast } = useToast();
 
@@ -27,7 +27,7 @@ const TransactionItem = ({
   const handleDelete = async () => {
     try {
       if (window.confirm("Are you sure you want to delete this transaction?")) {
-        await onDelete(transaction.id);
+        await deleteTransaction(transaction.id);
         toast({
           title: "Transaction deleted",
         });
