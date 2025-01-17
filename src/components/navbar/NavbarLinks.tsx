@@ -19,42 +19,36 @@ const NavbarLinks = ({ isMobile = false, onCloseMobileMenu = () => {} }) => {
   return (
     <div className={isMobile ? "flex flex-col" : "hidden md:flex space-x-8"}>
       <Link
-        href="/main/dashboard"
+        href="/dashboard"
         className={
-          pathName == "/main/dashboard"
-            ? `${activeLinkStyle}`
-            : `${navLinkStyle}`
+          pathName == "/dashboard" ? `${activeLinkStyle}` : `${navLinkStyle}`
         }
         onClick={handleClick}
       >
         Dashboard
       </Link>
       <Link
-        href="/main/transactions"
+        href="/transactions"
         className={
-          pathName == "/main/transactions"
-            ? `${activeLinkStyle}`
-            : `${navLinkStyle}`
+          pathName == "/transactions" ? `${activeLinkStyle}` : `${navLinkStyle}`
         }
         onClick={handleClick}
       >
         Transactions
       </Link>
       <Link
-        href="/main/budget"
+        href="/budget"
         className={
-          pathName == "/main/budget" ? `${activeLinkStyle}` : `${navLinkStyle}`
+          pathName == "/budget" ? `${activeLinkStyle}` : `${navLinkStyle}`
         }
         onClick={handleClick}
       >
         Budget
       </Link>
       <Link
-        href="/main/recurring"
+        href="/recurring"
         className={
-          pathName == "/main/recurring"
-            ? `${activeLinkStyle}`
-            : `${navLinkStyle}`
+          pathName == "/recurring" ? `${activeLinkStyle}` : `${navLinkStyle}`
         }
         onClick={handleClick}
       >

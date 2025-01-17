@@ -86,7 +86,7 @@ const UserMenu = ({ isDropdownOpen, toggleDropdown, user }: UserMenuProps) => {
           <ul className="py-2">
             <li>
               <Link
-                href="/main/dashboard"
+                href="/dashboard"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white"
                 onClick={handleLinkClick}
               >
@@ -95,7 +95,7 @@ const UserMenu = ({ isDropdownOpen, toggleDropdown, user }: UserMenuProps) => {
             </li>
             <li>
               <Link
-                href="/main/settings"
+                href="/settings"
                 className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-white"
                 onClick={handleLinkClick}
               >

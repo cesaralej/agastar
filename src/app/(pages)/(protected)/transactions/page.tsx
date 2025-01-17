@@ -10,14 +10,8 @@ import { Transaction, TransactionData } from "@/types";
 import { useToast } from "@/hooks/use-toast";
 
 const TransactionsPage = () => {
-  const {
-    transactions,
-    loading,
-    error,
-    addTransaction,
-    updateTransaction,
-    deleteTransaction,
-  } = useTransactions();
+  const { transactions, loading, error, addTransaction, updateTransaction } =
+    useTransactions();
   const [showSheet, setShowSheet] = useState(false);
   const [editData, setEditData] = useState<Partial<Transaction> | null>(null);
   const { toast } = useToast();
@@ -94,7 +88,6 @@ const TransactionsPage = () => {
         <TransactionList
           transactions={transactions || []}
           onEdit={handleEdit}
-          onDelete={deleteTransaction}
           error={error ? { message: error.message } : undefined}
         />
       )}
