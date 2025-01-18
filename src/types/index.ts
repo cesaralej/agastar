@@ -6,7 +6,7 @@ export type AccountType = (typeof ACCOUNTS)[number];
 export type TypeCategory = (typeof TYPES)[number];
 
 export interface TransactionData {
-  amount: string;
+  amount: number;
   date: Date;
   effectiveDate: Date;
   time: string;

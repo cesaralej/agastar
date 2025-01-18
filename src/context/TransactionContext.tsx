@@ -132,21 +132,12 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         "transactions"
       );
 
-      const datePart = transactionData.date.toISOString().split("T")[0]; // Extract "YYYY-MM-DD"
-
-      const dateTime = new Date(`${datePart}T${transactionData.time}:00`);
-      console.log("TC transaction time:", dateTime);
-
-      const docRef = await addDoc(transactionsCollectionRef, {
-        ...transactionData,
-        amount: Number(transactionData.amount),
-        date: dateTime,
-      });
+      const docRef = await addDoc(transactionsCollectionRef, transactionData);
       console.log("Document written with ID: ", docRef.id);
       checkRecurring(
         transactionData.category,
         transactionData.description,
-        dateTime
+        transactionData.date
       );
     } catch (error) {
       console.error("Error adding transaction:", error);
@@ -171,7 +162,8 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         "transactions",
         transactionId
       ); // Get doc reference
-      await updateDoc(transactionDocRef, updatedTransactionData); // Update the document
+
+      await updateDoc(transactionDocRef, updatedTransactionData);
       console.log("Transaction updated with ID: ", transactionId);
       if (
         updatedTransactionData.category &&

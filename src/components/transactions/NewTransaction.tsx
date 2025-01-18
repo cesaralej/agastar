@@ -39,9 +39,11 @@ import { ACCOUNTS, TYPES, Transaction, TransactionData } from "@/types";
 const categoryNames = categories.map((category) => category.name);
 
 const schema = z.object({
-  amount: z.string().refine((val) => !isNaN(Number(val)) && Number(val) > 0, {
-    message: "Amount must be a positive number",
-  }),
+  amount: z
+    .string()
+    .min(1, "cannot be empty")
+    .default("")
+    .refine((val) => !isNaN(Number(val)), { message: "Invalid amount" }),
   description: z.string(),
   type: z.enum(TYPES),
   account: z.enum(ACCOUNTS),
@@ -52,6 +54,15 @@ const schema = z.object({
   isCreditCardPayment: z.boolean(),
   comment: z.string().optional(),
 });
+
+const mergeDateAndTime = (date: Date, time: string) => {
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
+  const day = String(date.getDate()).padStart(2, "0");
+  const dateString = `${year}-${month}-${day}`;
+  const dateTime = new Date(`${dateString}T${time}:00`);
+  return dateTime;
+};
 
 const NewTransaction = ({
   setShowSheet,
@@ -69,7 +80,7 @@ const NewTransaction = ({
   const form = useForm<TransactionData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      amount: String(initialData?.amount) || undefined,
+      amount: initialData?.amount || undefined,
       description: initialData?.description || "",
       type: initialData?.type || "expense",
       account: initialData?.account || "credit",
@@ -121,8 +132,17 @@ const NewTransaction = ({
     }
   }, [type, form, isEdit]);
 
+  //check date
+  useEffect(() => {
+    console.log("Date:", form.getValues("date"));
+  }, [form]);
+
   const handleSubmit = async (data: TransactionData) => {
     setIsSubmitting(true);
+
+    data.amount = Number(data.amount);
+    const dateTime = mergeDateAndTime(data.date, data.time);
+    data.date = dateTime;
 
     if (isEdit) {
       console.log("Editing transaction:", data);
@@ -144,6 +164,7 @@ const NewTransaction = ({
       }
     } else {
       console.log("Adding new transaction:", data);
+      console.log("Date:", data.date);
       try {
         await addTransaction(data);
         toast({
