@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { useTransactions } from "@/context/TransactionContext";
 import TransactionItem from "./TransactionItem";
 import TransactionFilter from "./TransactionFilter";
@@ -10,7 +11,13 @@ const TransactionList = ({
   onEdit: (transaction: Transaction) => void;
 }) => {
   const { transactions, loading, error } = useTransactions();
-  let filteredTransactions = transactions || [];
+  const [filteredTransactions, setFilteredTransactions] = useState<
+    Transaction[]
+  >([]);
+
+  useEffect(() => {
+    setFilteredTransactions(transactions || []);
+  }, [transactions]);
 
   if (error) {
     return <div>Error: {error.message}</div>;
@@ -22,8 +29,10 @@ const TransactionList = ({
 
   const handleFilterChange = (filter: string | null) => {
     if (filter) {
-      filteredTransactions = filteredTransactions.filter(
-        (transaction) => transaction.category === filter
+      setFilteredTransactions(
+        (transactions || []).filter(
+          (transaction) => transaction.category === filter
+        )
       );
     }
   };
