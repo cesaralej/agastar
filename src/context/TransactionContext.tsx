@@ -126,6 +126,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
 
       const docRef = await addDoc(transactionsCollectionRef, {
         ...transactionData,
+        //I need to keep changing to number here because typescript will cry if I do it in the component
         amount: Number(transactionData.amount),
       });
       console.log("Document written with ID: ", docRef.id);

@@ -16,6 +16,10 @@ const TransactionList = ({
     return <div>Error: {error.message}</div>;
   }
 
+  if (loading) {
+    return <Spinner loading={loading} />;
+  }
+
   const handleFilterChange = (filter: string | null) => {
     if (filter) {
       filteredTransactions = filteredTransactions.filter(
