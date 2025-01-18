@@ -124,7 +124,10 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         "transactions"
       );
 
-      const docRef = await addDoc(transactionsCollectionRef, transactionData);
+      const docRef = await addDoc(transactionsCollectionRef, {
+        ...transactionData,
+        amount: Number(transactionData.amount),
+      });
       console.log("Document written with ID: ", docRef.id);
       checkRecurring(
         transactionData.category,
@@ -140,7 +143,6 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     transactionId: string,
     updatedTransactionData: Partial<Transaction>
   ) => {
-    // New update function
     if (!user) {
       console.error("User not logged in. Cannot update transaction.");
       return;
@@ -153,9 +155,12 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         user.uid,
         "transactions",
         transactionId
-      ); // Get doc reference
+      );
 
-      await updateDoc(transactionDocRef, updatedTransactionData);
+      await updateDoc(transactionDocRef, {
+        ...updatedTransactionData,
+        amount: Number(updatedTransactionData.amount),
+      });
       console.log("Transaction updated with ID: ", transactionId);
       if (
         updatedTransactionData.category &&

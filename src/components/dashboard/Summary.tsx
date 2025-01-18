@@ -28,7 +28,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
       let credit: number = 0;
 
       transactions.forEach((transaction: Transaction) => {
-        const amount: number = transaction.amount;
+        const amount: number = parseFloat(transaction.amount);
 
         if (transaction.isCreditCardPayment) {
           // Handle credit card payments
@@ -60,6 +60,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
         savings: savings,
         credit: credit,
       });
+      console.log(income, expenses, savings, credit);
     },
     [transactions] // Dependency on transactions prop
   );
@@ -74,7 +75,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
             <span className="text-lg text-gray-700">Total Income</span>
           </div>
           <div className="text-xl font-bold text-green-600">
-            {summary.totalIncome.toFixed(0)}€
+            {summary.totalIncome?.toFixed(0)}€
           </div>
         </div>
 
@@ -85,7 +86,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
             <span className="text-lg text-gray-700">Total Expenses</span>
           </div>
           <div className="text-xl font-bold text-red-600">
-            {summary.totalExpenses.toFixed(0)}€
+            {summary.totalExpenses?.toFixed(0)}€
           </div>
         </div>
 

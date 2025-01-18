@@ -6,7 +6,8 @@ export type AccountType = (typeof ACCOUNTS)[number];
 export type TypeCategory = (typeof TYPES)[number];
 
 export interface TransactionData {
-  amount: number;
+  //I need to keep amount as string because then I cant have the form empty at start
+  amount: string;
   date: Date;
   effectiveDate: Date;
   time: string;

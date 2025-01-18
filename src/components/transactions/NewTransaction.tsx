@@ -80,7 +80,7 @@ const NewTransaction = ({
   const form = useForm<TransactionData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      amount: initialData?.amount || undefined,
+      amount: initialData?.amount?.toString() || "",
       description: initialData?.description || "",
       type: initialData?.type || "expense",
       account: initialData?.account || "credit",
@@ -93,9 +93,7 @@ const NewTransaction = ({
     },
   });
 
-  if (initialData) {
-    console.log("Initial data:", initialData);
-  }
+  console.log("TF rendered");
 
   const isCreditCardPayment = form.watch("isCreditCardPayment");
 
@@ -132,15 +130,9 @@ const NewTransaction = ({
     }
   }, [type, form, isEdit]);
 
-  //check date
-  useEffect(() => {
-    console.log("Date:", form.getValues("date"));
-  }, [form]);
-
   const handleSubmit = async (data: TransactionData) => {
     setIsSubmitting(true);
 
-    data.amount = Number(data.amount);
     const dateTime = mergeDateAndTime(data.date, data.time);
     data.date = dateTime;
 
