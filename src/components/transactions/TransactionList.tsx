@@ -41,19 +41,19 @@ const TransactionList = ({
     );
   }
 
-  const groupedTransactions = filteredTransactions.reduce<
-    Record<string, Transaction[]>
-  >((acc, transaction) => {
-    const date = new Date(transaction.date);
-    const day = date.toLocaleDateString("en-US", { day: "2-digit" });
-    const month = date.toLocaleDateString("en-US", { month: "short" });
-    const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
-    const formattedDate = `${day} ${month} | ${weekday}`;
+  const groupedTransactions = filteredTransactions
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+    .reduce<Record<string, Transaction[]>>((acc, transaction) => {
+      const date = new Date(transaction.date);
+      const day = date.toLocaleDateString("en-US", { day: "2-digit" });
+      const month = date.toLocaleDateString("en-US", { month: "short" });
+      const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
+      const formattedDate = `${day} ${month} | ${weekday}`;
 
-    acc[formattedDate] = acc[formattedDate] || [];
-    acc[formattedDate].push(transaction);
-    return acc;
-  }, {});
+      acc[formattedDate] = acc[formattedDate] || [];
+      acc[formattedDate].push(transaction);
+      return acc;
+    }, {});
 
   return (
     <div className="container mx-auto mt-4">
