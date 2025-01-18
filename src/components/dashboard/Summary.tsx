@@ -28,7 +28,7 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
       let credit: number = 0;
 
       transactions.forEach((transaction: Transaction) => {
-        const amount: number = parseFloat(transaction.amount);
+        const amount: number = transaction.amount;
 
         if (transaction.isCreditCardPayment) {
           // Handle credit card payments
