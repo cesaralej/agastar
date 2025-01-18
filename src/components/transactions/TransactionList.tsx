@@ -34,6 +34,8 @@ const TransactionList = ({
           (transaction) => transaction.category === filter
         )
       );
+    } else {
+      setFilteredTransactions(transactions || []); // Reset to all transactions
     }
   };
 
