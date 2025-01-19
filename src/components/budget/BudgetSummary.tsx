@@ -3,19 +3,19 @@ import { useBudgets } from "@/context/BudgetContext";
 import { useRecurrings } from "@/context/RecurringContext";
 
 const BudgetSummary = () => {
-  const { totalIncome } = useTransactions();
+  const { totalIncome, incomeForMonth } = useTransactions();
   const { sumOfBudgets } = useBudgets();
   const { totalRecurring } = useRecurrings();
   const totalBudgets = sumOfBudgets + totalRecurring;
-  const exceedsIncome = totalBudgets > totalIncome;
-  const remaining = totalIncome - totalBudgets;
-  const budgetPercentage = Math.min((totalBudgets / totalIncome) * 100, 100);
+  const exceedsIncome = totalBudgets > incomeForMonth;
+  const remaining = incomeForMonth - totalBudgets;
+  const budgetPercentage = Math.min((totalBudgets / incomeForMonth) * 100, 100);
   return (
     <div className="mt-4">
       <div className="grid grid-cols-3 md:grid-cols-3 gap-4  mt-4">
         <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">Income</h3>
-          <p className="text-xl font-bold">${totalIncome.toFixed(2)}</p>
+          <p className="text-xl font-bold">${incomeForMonth.toFixed(2)}</p>
         </div>
         <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">Budgeted</h3>

@@ -1,6 +1,7 @@
 "use client";
 import { useState, useCallback } from "react";
 import { useBudgets } from "@/context/BudgetContext";
+import { useTransactions } from "@/context/TransactionContext";
 import BudgetSummary from "@/components/budget/BudgetSummary";
 import BudgetList from "@/components/budget/BudgetList";
 
@@ -16,6 +17,7 @@ const years = Array.from(
 
 const BudgetPage = () => {
   const { fetchBudgets } = useBudgets();
+  const { calculateIncomeForMonth } = useTransactions();
 
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
@@ -25,8 +27,9 @@ const BudgetPage = () => {
       const newMonth = parseInt(event.target.value, 10);
       setSelectedMonth(newMonth);
       fetchBudgets(newMonth, selectedYear);
+      calculateIncomeForMonth(newMonth, selectedYear);
     },
-    [fetchBudgets, selectedYear]
+    [fetchBudgets, selectedYear, calculateIncomeForMonth]
   );
 
   const handleYearChange = useCallback(
@@ -34,8 +37,9 @@ const BudgetPage = () => {
       const newYear = parseInt(event.target.value, 10);
       setSelectedYear(newYear);
       fetchBudgets(selectedMonth, newYear);
+      calculateIncomeForMonth(selectedMonth, newYear);
     },
-    [fetchBudgets, selectedMonth]
+    [fetchBudgets, selectedMonth, calculateIncomeForMonth]
   );
 
   return (

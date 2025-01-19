@@ -27,6 +27,8 @@ export interface TransactionContextType {
   ) => Promise<void>;
   deleteTransaction: (transactionId: string) => Promise<void>;
   totalIncome: number;
+  calculateIncomeForMonth: (year: number, month: number) => void;
+  incomeForMonth: number;
   spentPerCategory: Record<string, number>;
   spentPerYearMonthCategory: Record<
     number,
@@ -41,6 +43,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
 }) => {
   const [user, loadingUser] = useAuthState(auth);
   const [transactions, setTransactions] = useState<Transaction[] | null>(null);
+  const [incomeForMonth, setIncomeForMonth] = useState(0);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<FirestoreError | null>(null);
   const { recurrings, updateRecurring } = useRecurrings();
@@ -209,8 +212,35 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
 
   const totalIncome = (transactions ?? [])
     .filter((transaction) => transaction.type === "income")
-    .filter((transaction) => transaction.isCreditCardPayment === false)
+    .filter((transaction) => !transaction.isCreditCardPayment)
     .reduce((acc, transaction) => acc + Number(transaction.amount), 0);
+
+  // Las transaactions llegan todas, y se filtran en los componentes. Los budgets no, eso se piden por cada mes/año
+  // Entonces me tocaria mandar el año y mes al budget summary y calcular esto ahi
+  // El punto es que el context de transactions y el de budgets los estoy tratando muy diferentes
+  const calculateIncomeForMonth = (month: number, year: number): void => {
+    console.log(year, month);
+    const income = (transactions ?? [])
+      .filter((transaction) => transaction.type === "income")
+      .filter((transaction) => !transaction.isCreditCardPayment)
+      .filter((transaction) => {
+        const tYear = new Date(transaction.effectiveDate).getFullYear();
+        const yMonth = new Date(transaction.effectiveDate).getMonth();
+        console.log(tYear, yMonth);
+        return tYear === year && yMonth === month;
+      })
+
+      .reduce((acc, transaction) => acc + Number(transaction.amount), 0);
+    console.log(income);
+    setIncomeForMonth(income);
+  };
+
+  useEffect(() => {
+    if (!transactions) {
+      return;
+    }
+    calculateIncomeForMonth(new Date().getMonth(), new Date().getFullYear());
+  }, [transactions]);
 
   const spentPerCategory = (transactions ?? [])
     .filter((transaction) => transaction.type === "expense")
@@ -253,6 +283,8 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     updateTransaction,
     deleteTransaction,
     totalIncome,
+    calculateIncomeForMonth,
+    incomeForMonth,
     spentPerCategory,
     spentPerYearMonthCategory,
   };
