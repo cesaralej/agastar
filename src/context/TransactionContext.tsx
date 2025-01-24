@@ -219,19 +219,16 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
   // Entonces me tocaria mandar el año y mes al budget summary y calcular esto ahi
   // El punto es que el context de transactions y el de budgets los estoy tratando muy diferentes
   const calculateIncomeForMonth = (month: number, year: number): void => {
-    console.log(year, month);
     const income = (transactions ?? [])
       .filter((transaction) => transaction.type === "income")
       .filter((transaction) => !transaction.isCreditCardPayment)
       .filter((transaction) => {
         const tYear = new Date(transaction.effectiveDate).getFullYear();
         const yMonth = new Date(transaction.effectiveDate).getMonth();
-        console.log(tYear, yMonth);
         return tYear === year && yMonth === month;
       })
 
       .reduce((acc, transaction) => acc + Number(transaction.amount), 0);
-    console.log(income);
     setIncomeForMonth(income);
   };
 

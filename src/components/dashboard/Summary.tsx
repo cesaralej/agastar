@@ -60,7 +60,6 @@ const Summary = ({ transactions }: { transactions: Transaction[] }) => {
         savings: savings,
         credit: credit,
       });
-      console.log(income, expenses, savings, credit);
     },
     [transactions] // Dependency on transactions prop
   );
