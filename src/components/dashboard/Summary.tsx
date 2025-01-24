@@ -1,50 +1,57 @@
 "use client";
 import { useEffect, useState } from "react";
+import { useTransactions } from "@/context/TransactionContext";
 import { FaWallet, FaCreditCard } from "react-icons/fa";
 import { Transaction } from "@/types";
 
-const Summary = ({ transactions }: { transactions: Transaction[] }) => {
+const Summary = () => {
+  const { transactions, loading, error } = useTransactions();
   const [summary, setSummary] = useState({
     savings: 0,
     credit: 0,
   });
 
-  useEffect(
-    () => {
-      if (!transactions) return;
-      let savings: number = 0;
-      let credit: number = 0;
+  useEffect(() => {
+    if (!transactions) return;
+    let savings: number = 0;
+    let credit: number = 0;
 
-      transactions.forEach((transaction: Transaction) => {
-        const amount: number = parseFloat(transaction.amount);
+    transactions.forEach((transaction: Transaction) => {
+      const amount: number = parseFloat(transaction.amount);
 
-        if (transaction.isCreditCardPayment) {
-          // Handle credit card payments
-          credit -= amount;
-          savings -= amount;
-          return; // Skip further checks for this transaction
-        }
+      if (transaction.isCreditCardPayment) {
+        // Handle credit card payments
+        credit -= amount;
+        savings -= amount;
+        return; // Skip further checks for this transaction
+      }
 
-        // If the transaction is savings then add the amount to the savings or else add it to the credit
-        if (transaction.account === "savings") {
-          // If the transaction is income then add the amount to the savings or else subtract it
-          if (transaction.type === "income") {
-            savings += amount;
-          } else {
-            savings -= amount;
-          }
+      // If the transaction is savings then add the amount to the savings or else add it to the credit
+      if (transaction.account === "savings") {
+        // If the transaction is income then add the amount to the savings or else subtract it
+        if (transaction.type === "income") {
+          savings += amount;
         } else {
-          credit += amount;
+          savings -= amount;
         }
-      });
+      } else {
+        credit += amount;
+      }
+    });
 
-      setSummary({
-        savings: savings,
-        credit: credit,
-      });
-    },
-    [transactions] // Dependency on transactions prop
-  );
+    setSummary({
+      savings: savings,
+      credit: credit,
+    });
+  }, [transactions]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
 
   return (
     <>

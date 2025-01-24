@@ -1,8 +1,16 @@
 import { useEffect, useState } from "react";
+import { useTransactions } from "@/context/TransactionContext";
 import { FaMoneyBillAlt, FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { Transaction } from "@/types";
 
-const Balance = ({ transactions }: { transactions: Transaction[] }) => {
+const Balance = ({
+  selectedMonth,
+  selectedYear,
+}: {
+  selectedMonth: number;
+  selectedYear: number;
+}) => {
+  const { transactions, loading, error } = useTransactions();
   const [summary, setSummary] = useState({
     totalIncome: 0,
     totalExpenses: 0,
@@ -21,6 +29,14 @@ const Balance = ({ transactions }: { transactions: Transaction[] }) => {
       let credit: number = 0;
 
       transactions.forEach((transaction: Transaction) => {
+        // Check if the transaction is for the selected month and year
+        const transactionDate = new Date(transaction.effectiveDate);
+        if (
+          transactionDate.getMonth() !== selectedMonth ||
+          transactionDate.getFullYear() !== selectedYear
+        ) {
+          return; // Skip further checks for this transaction
+        }
         const amount: number = parseFloat(transaction.amount);
 
         if (transaction.isCreditCardPayment) {
@@ -54,8 +70,17 @@ const Balance = ({ transactions }: { transactions: Transaction[] }) => {
         credit: credit,
       });
     },
-    [transactions] // Dependency on transactions prop
+    [transactions, selectedMonth, selectedYear] // Dependency on transactions prop
   );
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error.message}</div>;
+  }
+
   return (
     <div className=" bg-white shadow-lg rounded-lg pl-6 pr-6  mt-8">
       {/* Total Income */}

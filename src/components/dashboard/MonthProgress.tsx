@@ -1,17 +1,49 @@
 import React, { useEffect, useState } from "react";
 
-const MonthProgress = () => {
+const MonthProgress = ({
+  selectedMonth,
+  selectedYear,
+}: {
+  selectedMonth: number;
+  selectedYear: number;
+}) => {
   const [progress, setProgress] = useState(0);
+  const [daysRemaining, setDaysRemaining] = useState(0);
 
   useEffect(() => {
     const updateProgress = () => {
-      const now = new Date();
-      //const firstDayOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
-      const lastDayOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0); // Important: 0 gives last day of previous month
-      const daysInMonth = lastDayOfMonth.getDate();
-      const currentDay = now.getDate();
-      const calculatedProgress = (currentDay / daysInMonth) * 100;
-      setProgress(calculatedProgress);
+      const lastDayOfSelectedMonth = new Date(
+        selectedYear,
+        selectedMonth + 1,
+        0
+      );
+      const daysInSelectedMonth = lastDayOfSelectedMonth.getDate();
+
+      const today = new Date();
+
+      if (
+        selectedYear < today.getFullYear() ||
+        (selectedYear === today.getFullYear() &&
+          selectedMonth < today.getMonth())
+      ) {
+        // Selected month is in the past
+        setProgress(100);
+        setDaysRemaining(0);
+      } else if (
+        selectedYear > today.getFullYear() ||
+        (selectedYear === today.getFullYear() &&
+          selectedMonth > today.getMonth())
+      ) {
+        // Selected month is in the future
+        setProgress(0);
+        setDaysRemaining(daysInSelectedMonth);
+      } else {
+        // Selected month is the current month
+        const currentDay = today.getDate();
+        const calculatedProgress = (currentDay / daysInSelectedMonth) * 100;
+        setProgress(calculatedProgress);
+        setDaysRemaining(daysInSelectedMonth - currentDay);
+      }
     };
 
     updateProgress();
@@ -19,12 +51,9 @@ const MonthProgress = () => {
     const intervalId = setInterval(updateProgress, 60000); // Update every minute (adjust as needed)
 
     return () => clearInterval(intervalId); // Clear interval on unmount
-  }, []);
+  }, [selectedMonth, selectedYear]);
 
   const remainingPercentage = 100 - progress;
-  const daysRemaining =
-    new Date(new Date().getFullYear(), new Date().getMonth() + 1, 0).getDate() -
-    new Date().getDate();
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
