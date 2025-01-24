@@ -105,11 +105,11 @@ const BudgetItem = ({
           />
         ) : (
           <>
-            <p className="text-sm text-gray-500">Budget: ${budget.amount}</p>
+            <p className="text-sm text-gray-500">Budget: {budget.amount}€</p>
             <div className="flex justify-between items-center">
               <div>
                 <p className={`text-sm ${getRemainingColor(remaining)}`}>
-                  Remaining: ${remaining}
+                  Remaining: {remaining}€
                 </p>
               </div>
 

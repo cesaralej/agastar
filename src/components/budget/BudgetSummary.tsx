@@ -15,11 +15,11 @@ const BudgetSummary = () => {
       <div className="grid grid-cols-3 md:grid-cols-3 gap-4  mt-4">
         <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">Income</h3>
-          <p className="text-xl font-bold">${incomeForMonth.toFixed(2)}</p>
+          <p className="text-xl font-bold">{incomeForMonth.toFixed(0)}€</p>
         </div>
         <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">Budgeted</h3>
-          <p className="text-xl font-bold">${totalBudgets.toFixed(2)}</p>
+          <p className="text-xl font-bold">{totalBudgets.toFixed(0)}€</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
@@ -31,7 +31,7 @@ const BudgetSummary = () => {
               exceedsIncome ? "text-red-500" : "text-green-500"
             }`}
           >
-            ${remaining.toFixed(2)}
+            {remaining.toFixed(0)}€
           </p>
         </div>
       </div>
