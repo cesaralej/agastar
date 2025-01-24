@@ -11,7 +11,7 @@ import {
   useAuthState,
 } from "react-firebase-hooks/auth";
 
-import { FcGoogle } from "react-icons/fc"; // Import Google icon
+import { FcGoogle } from "react-icons/fc";
 import { AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 
 const AuthPage = () => {
@@ -36,9 +36,8 @@ const AuthPage = () => {
   const user = useAuthState(auth)[0];
 
   useEffect(() => {
-    //console.log("Login page use effect:", user);
     if (user || signInUser || googleUser || registeredUser) {
-      router.push("/dashboard"); // Redirect to home if user is already logged in
+      router.push("/dashboard");
     }
   }, [user, googleUser, router, registeredUser, signInUser]);
 
@@ -49,6 +48,29 @@ const AuthPage = () => {
 
   const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    try {
+      await signInWithEmailAndPassword(email, password);
+      if (error) {
+        const loginError = error as LoginError;
+        console.log(
+          "createUserWithEmailAndPassword error:",
+          loginError.code,
+          loginError.message
+        );
+      } else {
+        router.push("/dashboard");
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        console.log("An unknown error occurred");
+      }
+    }
+    setPassword(""); // Clear password after successful login
+  };
+  const demoLogin = async () => {
+    const email = "test@agastar.com";
+    const password = "password";
+
     try {
       await signInWithEmailAndPassword(email, password);
       if (error) {
@@ -112,12 +134,6 @@ const AuthPage = () => {
     return <div>Loading...</div>;
   }
 
-  //There is an issue here
-  if (user || signInUser || googleUser || registeredUser) {
-    router.replace("/dashboard");
-    return null;
-  }
-
   return (
     <div className="min-h-screen bg-gray-100 flex items-center justify-center">
       <div className="bg-white p-8 rounded-lg shadow-md w-96">
@@ -174,6 +190,13 @@ const AuthPage = () => {
             className="w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 rounded-md focus:outline-none focus:ring focus:ring-blue-300 disabled:bg-gray-400"
           >
             {isSignup ? "Sign Up" : "Sign In"}
+          </button>
+          <button
+            type="button"
+            onClick={demoLogin}
+            className="w-full bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 rounded-md focus:outline-none focus:ring focus:ring-blue-300 mt-4"
+          >
+            Demo Login
           </button>
         </form>
         <div className="mt-6 text-center">
