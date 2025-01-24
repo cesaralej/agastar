@@ -1,45 +1,56 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { categories, CategoryType } from "@/data/categoriesv2";
+
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 interface FilterProps {
   onFilterChange: (category: string | null) => void;
 }
 
 const TransactionFilter: React.FC<FilterProps> = ({ onFilterChange }) => {
-  const [selectedCategory, setSelectedCategory] = useState<CategoryType | null>(
-    ""
-  );
+  const [selectedCategory, setSelectedCategory] = useState<
+    CategoryType | string
+  >("All");
 
   const categoryNames = [
-    { name: "All", value: "" }, // Add "All" option
+    { name: "All", value: "All" }, // Add "All" option
     ...categories.map((category) => ({
       name: category.label,
       value: category.name,
     })),
   ];
 
-  const handleCategoryChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
-  ) => {
-    const category = event.target.value as CategoryType;
-    setSelectedCategory(category);
-    onFilterChange(category === "" ? null : category); // Handle "All" selection
-  };
+  useEffect(() => {
+    onFilterChange(selectedCategory === "All" ? null : selectedCategory);
+  }, [selectedCategory]);
 
   return (
     <div className="flex justify-between items-center mb-4">
       <div className="flex gap-4 ">
-        <select
-          value={selectedCategory ?? ""}
-          onChange={handleCategoryChange}
-          className="border border-gray-300 rounded-md p-2"
+        <Select
+          defaultValue={selectedCategory}
+          onValueChange={setSelectedCategory}
         >
-          {categoryNames.map((categoryName) => (
-            <option key={categoryName.value} value={categoryName.value}>
-              {categoryName.name}
-            </option>
-          ))}
-        </select>
+          <SelectTrigger className="w-[150px] bg-white">
+            <SelectValue placeholder="Select a category" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectGroup>
+              {categoryNames.map((categoryName) => (
+                <SelectItem key={categoryName.value} value={categoryName.value}>
+                  {categoryName.name}
+                </SelectItem>
+              ))}
+            </SelectGroup>
+          </SelectContent>
+        </Select>
       </div>
     </div>
   );
