@@ -1,7 +1,9 @@
 "use client";
-import Summary from "@/components/dashboard/Summary";
-import MonthProgress from "@/components/dashboard/MonthProgress";
 import { useTransactions } from "@/context/TransactionContext";
+import Summary from "@/components/dashboard/Summary";
+import Balance from "@/components/dashboard/Balance";
+import MonthProgress from "@/components/dashboard/MonthProgress";
+import DashBudgetList from "@/components/dashboard/DashBudgetList";
 
 const DashboardPage = () => {
   const { transactions, loading, error } = useTransactions();
@@ -18,6 +20,11 @@ const DashboardPage = () => {
     <>
       <h2 className="text-2xl font-semibold mb-4 mt-4">Dashboard</h2>
       <MonthProgress />
+      <DashBudgetList
+        selectedMonth={new Date().getMonth()}
+        selectedYear={new Date().getFullYear()}
+      />
+      <Balance transactions={transactions || []} />
       <Summary transactions={transactions || []} />
     </>
   );

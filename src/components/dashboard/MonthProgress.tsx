@@ -27,7 +27,7 @@ const MonthProgress = () => {
     new Date().getDate();
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6 mb-6">
+    <div className="bg-white rounded-lg shadow-md p-6">
       <h2 className="text-lg font-semibold mb-4">Month Progress</h2>
       <div className="relative h-8 bg-gray-200 rounded-full overflow-hidden">
         <div
