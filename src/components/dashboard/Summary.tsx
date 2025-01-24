@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useTransactions } from "@/context/TransactionContext";
 import { FaWallet, FaCreditCard } from "react-icons/fa";
 import { Transaction } from "@/types";
+import Spinner from "@/components/Spinner";
 
 const Summary = () => {
   const { transactions, loading, error } = useTransactions();
@@ -46,7 +47,7 @@ const Summary = () => {
   }, [transactions]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner loading={loading} />;
   }
 
   if (error) {

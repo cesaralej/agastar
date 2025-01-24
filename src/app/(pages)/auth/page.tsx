@@ -11,6 +11,8 @@ import {
   useAuthState,
 } from "react-firebase-hooks/auth";
 
+import Spinner from "@/components/Spinner";
+
 import { FcGoogle } from "react-icons/fc";
 import { AiOutlineMail, AiOutlineLock } from "react-icons/ai";
 
@@ -131,7 +133,7 @@ const AuthPage = () => {
   };
 
   if (loading || createUserLoading || googleLoading) {
-    return <div>Loading...</div>;
+    return <Spinner loading={loading} />;
   }
 
   return (

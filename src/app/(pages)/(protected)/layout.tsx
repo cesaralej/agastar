@@ -3,9 +3,6 @@ import { useUser } from "@/lib/auth";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
-//Hace que la pagina haga un loading innecesario pero no encuentro mejor manera de poner protected routes.
-//Ademas no me gusta que todo queda abajo de /main
-
 interface DashboardLayoutProps {
   children: React.ReactNode;
 }
@@ -21,10 +18,11 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
     if (currentUser === null) {
       router.push("/auth");
     } else if (currentUser) {
-      setLoading(false); // Auth check complete
+      setLoading(false);
     }
   }, [currentUser, router]);
 
+  //Hidration no me deja usar el spinner
   if (loading) {
     return (
       <div className="h-screen flex items-center justify-center">

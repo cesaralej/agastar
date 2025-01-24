@@ -9,15 +9,16 @@ import {
   addDoc,
   deleteDoc,
   FirestoreError,
+  doc,
+  updateDoc,
 } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
-import { doc, updateDoc } from "firebase/firestore";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Transaction, TransactionData } from "@/types";
 import { useRecurrings } from "./RecurringContext";
 
 export interface TransactionContextType {
-  transactions: Transaction[] | null;
+  transactions: Transaction[];
   loading: boolean;
   error: FirestoreError | null;
   addTransaction: (transactionData: TransactionData) => Promise<void>;
@@ -26,10 +27,7 @@ export interface TransactionContextType {
     updatedTransactionData: Partial<TransactionData>
   ) => Promise<void>;
   deleteTransaction: (transactionId: string) => Promise<void>;
-  totalIncome: number;
-  calculateIncomeForMonth: (year: number, month: number) => void;
-  incomeForMonth: number;
-  spentPerCategory: Record<string, number>;
+  calculateIncomeForMonth: (year: number, month: number) => number;
   spentPerYearMonthCategory: Record<
     number,
     Record<number, Record<string, number>>
@@ -42,8 +40,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
   const [user, loadingUser] = useAuthState(auth);
-  const [transactions, setTransactions] = useState<Transaction[] | null>(null);
-  const [incomeForMonth, setIncomeForMonth] = useState(0);
+  const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<FirestoreError | null>(null);
   const { recurrings, updateRecurring } = useRecurrings();
@@ -51,9 +48,10 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     if (loadingUser || !user) {
       setLoading(false);
-      setTransactions(null);
+      setTransactions([]);
       return;
     }
+    setLoading(true);
     const transactionsCollectionRef = collection(
       db,
       "users",
@@ -165,7 +163,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         ...updatedTransactionData,
         amount: Number(updatedTransactionData.amount),
       });
-      console.log("Transaction updated with ID: ", transactionId);
+      console.info("Transaction updated with ID: ", transactionId);
       if (
         updatedTransactionData.category &&
         updatedTransactionData.description &&
@@ -203,23 +201,15 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
         transactionId
       );
       await deleteDoc(transactionDocRef);
-      console.log("Transaction deleted with ID: ", transactionId);
+      console.info("Transaction deleted with ID: ", transactionId);
       //Figure out what to do if it is a recurring expense
     } catch (error) {
       console.error("Error deleting transaction:", error);
     }
   };
 
-  const totalIncome = (transactions ?? [])
-    .filter((transaction) => transaction.type === "income")
-    .filter((transaction) => !transaction.isCreditCardPayment)
-    .reduce((acc, transaction) => acc + Number(transaction.amount), 0);
-
-  // Las transaactions llegan todas, y se filtran en los componentes. Los budgets no, eso se piden por cada mes/año
-  // Entonces me tocaria mandar el año y mes al budget summary y calcular esto ahi
-  // El punto es que el context de transactions y el de budgets los estoy tratando muy diferentes
-  const calculateIncomeForMonth = (month: number, year: number): void => {
-    const income = (transactions ?? [])
+  const calculateIncomeForMonth = (month: number, year: number): number => {
+    const income = transactions
       .filter((transaction) => transaction.type === "income")
       .filter((transaction) => !transaction.isCreditCardPayment)
       .filter((transaction) => {
@@ -229,26 +219,10 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
       })
 
       .reduce((acc, transaction) => acc + Number(transaction.amount), 0);
-    setIncomeForMonth(income);
+    return income;
   };
 
-  useEffect(() => {
-    if (!transactions) {
-      return;
-    }
-    calculateIncomeForMonth(new Date().getMonth(), new Date().getFullYear());
-  }, [transactions]);
-
-  const spentPerCategory = (transactions ?? [])
-    .filter((transaction) => transaction.type === "expense")
-    .filter((transaction) => transaction.isCreditCardPayment === false)
-    .reduce((acc, transaction) => {
-      acc[transaction.category] =
-        (acc[transaction.category] ?? 0) + Number(transaction.amount);
-      return acc;
-    }, {} as Record<string, number>);
-
-  const spentPerYearMonthCategory = (transactions ?? [])
+  const spentPerYearMonthCategory = transactions
     .filter((transaction) => transaction.type === "expense")
     .filter((transaction) => transaction.isCreditCardPayment === false)
     .reduce((acc, transaction) => {
@@ -256,7 +230,6 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
       const month = new Date(transaction.effectiveDate).getMonth();
       const category = transaction.category;
 
-      // Initialize the structure if it doesn't exist
       if (!acc[year]) {
         acc[year] = {};
       }
@@ -279,10 +252,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     addTransaction,
     updateTransaction,
     deleteTransaction,
-    totalIncome,
     calculateIncomeForMonth,
-    incomeForMonth,
-    spentPerCategory,
     spentPerYearMonthCategory,
   };
 

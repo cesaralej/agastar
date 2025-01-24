@@ -1,12 +1,9 @@
 import React, { useEffect, useState } from "react";
 
-const MonthProgress = ({
-  selectedMonth,
-  selectedYear,
-}: {
-  selectedMonth: number;
-  selectedYear: number;
-}) => {
+import { useDate } from "@/context/DateContext";
+
+const MonthProgress = () => {
+  const { selectedMonth, selectedYear } = useDate();
   const [progress, setProgress] = useState(0);
   const [daysRemaining, setDaysRemaining] = useState(0);
 

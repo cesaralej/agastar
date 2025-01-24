@@ -6,7 +6,7 @@ import {
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
-import NewTransaction from "./NewTransaction";
+import TransactionForm from "./TransactionForm";
 
 import { Transaction } from "@/types";
 
@@ -31,7 +31,7 @@ const TransactionDrawer = ({
         </DrawerHeader>
         <ScrollArea className="overflow-y-auto">
           <div className="p-6">
-            <NewTransaction
+            <TransactionForm
               setShowSheet={setShowSheet}
               initialData={initialData}
               isEdit={isEdit}

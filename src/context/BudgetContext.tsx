@@ -4,13 +4,12 @@ import { createContext, useContext, useState, useEffect } from "react";
 import {
   collection,
   query,
-  getDocs,
+  onSnapshot,
   setDoc,
-  where,
   doc,
   FirestoreError,
+  serverTimestamp,
 } from "firebase/firestore";
-import { serverTimestamp } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { Budget } from "@/types";
@@ -19,9 +18,9 @@ interface BudgetContextType {
   budgets: Budget[];
   loading: boolean;
   error: FirestoreError | null;
-  fetchBudgets: (month: number, year: number) => Promise<void>;
   updateBudget: (budget: Budget) => Promise<void>;
-  sumOfBudgets: number;
+  filterBudgets: (month?: number, year?: number) => Budget[];
+  getSumOfBudgets: (month?: number, year?: number) => number;
 }
 
 const BudgetContext = createContext<BudgetContextType | null>(null);
@@ -29,45 +28,58 @@ const BudgetContext = createContext<BudgetContextType | null>(null);
 export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
   children,
 }) => {
-  const user = useAuthState(auth)[0];
+  const [user, loadingUser] = useAuthState(auth);
   const [budgets, setBudgets] = useState<Budget[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<FirestoreError | null>(null);
 
-  const fetchBudgets = async (month: number, year: number) => {
-    //console.log("BC fetching budgets for ", month, year);
-    setLoading(true);
-    setError(null);
-    if (!user) {
+  useEffect(() => {
+    if (loadingUser || !user) {
       setLoading(false);
+      setBudgets([]);
       return;
     }
+    setLoading(true);
+    const budgetsCollectionRef = collection(db, "users", user.uid, "budgets");
+    const q = query(budgetsCollectionRef);
 
-    try {
-      const budgetsCollection = collection(db, "users", user.uid, "budgets");
-      const q = query(
-        budgetsCollection,
-        where("month", "==", month),
-        where("year", "==", year)
-      );
-      const querySnapshot = await getDocs(q);
+    const unsubscribe = onSnapshot(
+      q,
+      (snapshot) => {
+        const budgetsData: Budget[] = snapshot.docs.map((doc) => {
+          const data = doc.data();
+          return {
+            id: doc.id,
+            amount: data.amount || 0,
+            lastUpdated: data.lastUpdated?.toDate() || null,
+            category: data.category || "",
+            account: data.account || "",
+            month: data.month || 0,
+            year: data.year || 0,
+          };
+        });
 
-      const fetchedBudgets = querySnapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      })) as Budget[];
+        setBudgets(budgetsData);
+        setLoading(false);
+      },
+      (error) => {
+        setError(error);
+        setLoading(false);
+      }
+    );
 
-      setBudgets(fetchedBudgets);
-    } catch (error) {
-      console.log(error);
-      setError(error as FirestoreError);
-    } finally {
-      setLoading(false);
-    }
-  };
+    return () => unsubscribe();
+  }, [user, loadingUser]);
 
   const updateBudget = async (budget: Budget) => {
-    if (!user) return;
+    if (!user) {
+      console.error("User not logged in. Cannot update budget.");
+      return;
+    }
+    if (!budget.id) {
+      console.error("Budget ID is missing. Cannot update.");
+      return;
+    }
 
     try {
       const budgetRef = doc(db, "users", user.uid, "budgets", budget.id);
@@ -75,47 +87,41 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         ...budget,
         lastUpdated: serverTimestamp(),
       });
-      setBudgets((prevBudgets) => {
-        const budgetExists = prevBudgets.some((b) => b.id === budget.id);
-
-        if (budgetExists) {
-          // Update existing budget
-          return prevBudgets.map((b) =>
-            b.id === budget.id ? { ...b, ...budget } : b
-          );
-        } else {
-          // Add new budget
-          return [...prevBudgets, budget];
-        }
-      });
-      console.log(`Budget ${budget.id} updated successfully.`);
-      //console.log("BC Budgets: ", budgets);
+      console.info("Budget updated with ID: ", budget.id);
     } catch (error) {
       console.error("Error updating budget:", error);
     }
   };
 
-  const sumOfBudgets = budgets.reduce(
-    (acc, budget) =>
-      budget.category !== "luxury" && budget.category !== "utilities"
-        ? acc + budget.amount
-        : acc,
-    0
-  );
+  const filterBudgets = (month?: number, year?: number) => {
+    return budgets.filter((budget) => {
+      const matchesMonth = month == null || budget.month === month;
+      const matchesYear = year == null || budget.year === year;
+      return matchesMonth && matchesYear;
+    });
+  };
 
-  useEffect(() => {
-    //console.log("BC useEffect");
-    const today = new Date();
-    fetchBudgets(today.getMonth(), today.getFullYear());
-  }, [user]);
+  const getSumOfBudgets = (month?: number, year?: number) => {
+    return budgets
+      .filter((budget) => {
+        const matchesMonth = month == null || budget.month === month;
+        const matchesYear = year == null || budget.year === year;
+        return matchesMonth && matchesYear;
+      })
+      .filter(
+        (budget) =>
+          budget.category !== "luxury" && budget.category !== "utilities"
+      )
+      .reduce((acc, budget) => acc + budget.amount, 0);
+  };
 
   const value = {
     budgets,
     loading,
     error,
     updateBudget,
-    fetchBudgets,
-    sumOfBudgets,
+    filterBudgets,
+    getSumOfBudgets,
   };
 
   return (

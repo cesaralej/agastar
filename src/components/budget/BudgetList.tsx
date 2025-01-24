@@ -4,23 +4,19 @@ import { Budget, Category } from "@/types";
 import { useBudgets } from "@/context/BudgetContext";
 import { useTransactions } from "@/context/TransactionContext";
 import { useRecurrings } from "@/context/RecurringContext";
+import { useDate } from "@/context/DateContext";
 import Spinner from "@/components/Spinner";
 
-const BudgetList = ({
-  selectedMonth,
-  selectedYear,
-}: {
-  selectedMonth: number;
-  selectedYear: number;
-}) => {
-  const { budgets: globalBudgets, loading, error, updateBudget } = useBudgets();
-  const { totalIncome, spentPerYearMonthCategory } = useTransactions();
+const BudgetList = () => {
+  const { loading, error, updateBudget, getSumOfBudgets, filterBudgets } =
+    useBudgets();
+  const { calculateIncomeForMonth, spentPerYearMonthCategory } =
+    useTransactions();
   const { totalRecurring } = useRecurrings();
+  const { selectedMonth, selectedYear } = useDate();
 
-  const sumOfBudgets = globalBudgets.reduce(
-    (acc, budget) => (budget.category !== "Luxury" ? acc + budget.amount : acc),
-    0
-  );
+  const sumOfBudgets = getSumOfBudgets(selectedMonth, selectedYear);
+  const incomeForMonth = calculateIncomeForMonth(selectedMonth, selectedYear);
 
   const defaults = categories
     .filter(
@@ -28,10 +24,11 @@ const BudgetList = ({
     )
     .map((category) => {
       if (category.name === "luxury") {
+        const amount = incomeForMonth - sumOfBudgets - totalRecurring;
         return {
           id: `${category.name}-${selectedMonth}-${selectedYear}`,
           category: category.name,
-          amount: totalIncome - sumOfBudgets - totalRecurring,
+          amount: amount < 0 ? 0 : amount,
           month: selectedMonth,
           year: selectedYear,
         };
@@ -45,7 +42,7 @@ const BudgetList = ({
         };
       }
 
-      const existingBudget = globalBudgets.find(
+      const existingBudget = filterBudgets(selectedMonth, selectedYear).find(
         (budget) => budget.category === category.name
       );
 

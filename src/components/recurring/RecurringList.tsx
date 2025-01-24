@@ -1,6 +1,7 @@
 import RecurringItem from "./RecurringItem";
 import { Recurring } from "@/types";
 import { useRecurrings } from "@/context/RecurringContext";
+import Spinner from "@/components/Spinner";
 
 const RecurringList = ({
   onEdit,
@@ -17,7 +18,7 @@ const RecurringList = ({
   }
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner loading={loading} />;
   }
 
   return (

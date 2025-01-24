@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react";
 import { useTransactions } from "@/context/TransactionContext";
+import { useDate } from "@/context/DateContext";
+import Spinner from "@/components/Spinner";
 import { FaMoneyBillAlt, FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { Transaction } from "@/types";
 
-const Balance = ({
-  selectedMonth,
-  selectedYear,
-}: {
-  selectedMonth: number;
-  selectedYear: number;
-}) => {
+const Balance = () => {
   const { transactions, loading, error } = useTransactions();
+  const { selectedMonth, selectedYear } = useDate();
   const [summary, setSummary] = useState({
     totalIncome: 0,
     totalExpenses: 0,
@@ -74,7 +71,7 @@ const Balance = ({
   );
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Spinner loading={loading} />;
   }
 
   if (error) {

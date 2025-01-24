@@ -1,15 +1,22 @@
 import { useTransactions } from "@/context/TransactionContext";
 import { useBudgets } from "@/context/BudgetContext";
 import { useRecurrings } from "@/context/RecurringContext";
+import { useDate } from "@/context/DateContext";
 
 const BudgetSummary = () => {
-  const { totalIncome, incomeForMonth } = useTransactions();
-  const { sumOfBudgets } = useBudgets();
+  const { calculateIncomeForMonth } = useTransactions();
+  const { getSumOfBudgets } = useBudgets();
   const { totalRecurring } = useRecurrings();
+  const { selectedMonth, selectedYear } = useDate();
+
+  const sumOfBudgets = getSumOfBudgets(selectedMonth, selectedYear);
+  const incomeForMonth = calculateIncomeForMonth(selectedMonth, selectedYear);
+
   const totalBudgets = sumOfBudgets + totalRecurring;
   const exceedsIncome = totalBudgets > incomeForMonth;
   const remaining = incomeForMonth - totalBudgets;
   const budgetPercentage = Math.min((totalBudgets / incomeForMonth) * 100, 100);
+
   return (
     <div className="mt-4">
       <div className="grid grid-cols-3 md:grid-cols-3 gap-4  mt-4">
@@ -46,7 +53,7 @@ const BudgetSummary = () => {
 
       <div className="flex justify-between">
         <span className="text-sm">
-          {sumOfBudgets > totalIncome ? "Over Budget" : "Under Budget"}
+          {sumOfBudgets > incomeForMonth ? "Over Budget" : "Under Budget"}
         </span>
         <span className="text-sm">{`${budgetPercentage.toFixed(1)}%`}</span>
       </div>

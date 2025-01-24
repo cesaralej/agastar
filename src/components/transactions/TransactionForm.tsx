@@ -64,7 +64,7 @@ const mergeDateAndTime = (date: Date, time: string) => {
   return dateTime;
 };
 
-const NewTransaction = ({
+const TransactionForm = ({
   setShowSheet,
   initialData = null,
   isEdit = false,
@@ -462,4 +462,4 @@ const NewTransaction = ({
     </Form>
   );
 };
-export default NewTransaction;
+export default TransactionForm;
