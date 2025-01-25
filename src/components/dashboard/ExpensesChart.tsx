@@ -1,10 +1,9 @@
 import { useDate } from "@/context/DateContext";
 import { useTransactions } from "@/context/TransactionContext";
 
-import { Bar, BarChart, CartesianGrid, XAxis } from "recharts";
+import { Bar, BarChart } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { ChartLegend, ChartLegendContent } from "@/components/ui/chart";
 
 const chartConfig = {
   desktop: {
