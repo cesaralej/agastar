@@ -212,10 +212,21 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
-  const filterTransactions = (month?: number, year?: number) => {
+  const filterTransactions = (
+    month: number,
+    year: number,
+    effective: boolean = true
+  ) => {
     return transactions.filter((transaction) => {
-      const tYear = new Date(transaction.effectiveDate).getFullYear();
-      const yMonth = new Date(transaction.effectiveDate).getMonth();
+      let tYear;
+      let yMonth;
+      if (effective) {
+        tYear = new Date(transaction.effectiveDate).getFullYear();
+        yMonth = new Date(transaction.effectiveDate).getMonth();
+      } else {
+        tYear = new Date(transaction.date).getFullYear();
+        yMonth = new Date(transaction.date).getMonth();
+      }
       const matchesYear = year == null || tYear === year;
       const matchesMonth = month == null || yMonth === month;
       return matchesMonth && matchesYear;
@@ -262,7 +273,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
       day: day + 1,
       amount: 0,
     }));
-    const filteredTransactions = filterTransactions(month, year)
+    const filteredTransactions = filterTransactions(month, year, false)
       .filter((transaction) => transaction.type === "expense")
       .filter((transaction) => transaction.isCreditCardPayment === false);
     const spentPerDay = filteredTransactions.reduce((acc, transaction) => {
