@@ -22,15 +22,15 @@ const ExpensesChart = () => {
 
   const data = calculateSpentPerDay(selectedMonth, selectedYear);
   const chartData = Object.entries(data).map(([, value]) => ({
-    day: value.day,
-    amount: value.amount,
+    Day: value.Day,
+    Spent: value.Spent,
   }));
 
   return (
     <ChartContainer config={chartConfig} className="max-h-[50px] w-full">
       <BarChart accessibilityLayer data={chartData}>
         <ChartTooltip content={<ChartTooltipContent />} />
-        <Bar dataKey="amount" fill="var(--color-desktop)" radius={4} />
+        <Bar dataKey="Spent" fill="var(--color-desktop)" radius={4} />
       </BarChart>
     </ChartContainer>
   );

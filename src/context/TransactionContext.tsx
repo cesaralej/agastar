@@ -31,7 +31,7 @@ export interface TransactionContextType {
   calculateSpentPerDay: (
     year: number,
     month: number
-  ) => { day: number; amount: number }[];
+  ) => { Day: number; Spent: number }[];
   spentPerYearMonthCategory: Record<
     number,
     Record<number, Record<string, number>>
@@ -256,7 +256,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
   const calculateSpentPerDay = (
     month: number,
     year: number
-  ): { day: number; amount: number }[] => {
+  ): { Day: number; Spent: number }[] => {
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const allDays = Array.from({ length: daysInMonth }, (_, day) => ({
       day: day + 1,
@@ -279,8 +279,8 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     }, {} as Record<number, number>);
 
     const result = allDays.map((entry) => ({
-      day: entry.day, // Day number
-      amount: spentPerDay[entry.day] ?? 0, // Override amount if it exists in the aggregated data
+      Day: entry.day, // Day number
+      Spent: spentPerDay[entry.day] ?? 0, // Override amount if it exists in the aggregated data
     }));
     return result;
   };
