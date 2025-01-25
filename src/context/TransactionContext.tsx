@@ -266,7 +266,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
       .filter((transaction) => transaction.type === "expense")
       .filter((transaction) => transaction.isCreditCardPayment === false);
     const spentPerDay = filteredTransactions.reduce((acc, transaction) => {
-      const transactionDate = new Date(transaction.effectiveDate);
+      const transactionDate = new Date(transaction.date);
       const day = transactionDate.getDate();
 
       if (!acc[day]) {
