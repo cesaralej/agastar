@@ -4,6 +4,8 @@ import { useDate } from "@/context/DateContext";
 
 import ExpensesChart from "./ExpensesChart";
 
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
 const MonthProgress = () => {
   const { selectedMonth, selectedYear } = useDate();
   const [progress, setProgress] = useState(0);
@@ -55,26 +57,30 @@ const MonthProgress = () => {
   const remainingPercentage = 100 - progress;
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-lg font-semibold mb-4">Month Progress</h2>
-      <div className="flex">
-        <ExpensesChart />
-      </div>
-      <div className="relative h-8 bg-gray-200 rounded-full overflow-hidden">
-        <div
-          className="absolute top-0 left-0 h-full bg-blue-500 rounded-full transition-width duration-500 ease-in-out" // Added transition
-          style={{ width: `${progress}%` }}
-        ></div>
-        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-medium text-sm">
-          {remainingPercentage > 5 && (
-            <>{remainingPercentage.toFixed(0)}% Left</>
-          )}
+    <Card>
+      <CardHeader>
+        <CardTitle>Month Progress</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="flex">
+          <ExpensesChart />
         </div>
-      </div>
-      <p className="mt-2 text-sm text-gray-500">
-        {daysRemaining} days remaining
-      </p>
-    </div>
+        <div className="relative h-8 bg-gray-200 rounded-full overflow-hidden">
+          <div
+            className="absolute top-0 left-0 h-full bg-blue-500 rounded-full transition-width duration-500 ease-in-out" // Added transition
+            style={{ width: `${progress}%` }}
+          ></div>
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-white font-medium text-sm">
+            {remainingPercentage > 5 && (
+              <>{remainingPercentage.toFixed(0)}% Left</>
+            )}
+          </div>
+        </div>
+        <p className="mt-2 text-sm text-gray-500">
+          {daysRemaining} days remaining
+        </p>
+      </CardContent>
+    </Card>
   );
 };
 

@@ -27,6 +27,7 @@ export interface Category {
   name: string;
   icon: React.JSX.Element;
   color: string;
+  hexColor: string;
 }
 
 export interface Budget {

@@ -1,6 +1,7 @@
 "use client";
 import { useEffect, useState } from "react";
 import { useTransactions } from "@/context/TransactionContext";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaWallet, FaCreditCard } from "react-icons/fa";
 import { Transaction } from "@/types";
 import Spinner from "@/components/Spinner";
@@ -55,9 +56,11 @@ const Summary = () => {
   }
 
   return (
-    <>
-      {/* Savings and Credit Section */}
-      <div className=" bg-white shadow-lg rounded-lg pl-6 pr-6 mt-8">
+    <Card>
+      <CardHeader>
+        <CardTitle>Accounts</CardTitle>
+      </CardHeader>
+      <CardContent>
         {/* Savings */}
         <div className="flex justify-between items-center py-4 border-b">
           <div className="flex items-center space-x-2">
@@ -79,8 +82,8 @@ const Summary = () => {
             {summary.credit.toFixed(0)}€
           </div>
         </div>
-      </div>
-    </>
+      </CardContent>
+    </Card>
   );
 };
 

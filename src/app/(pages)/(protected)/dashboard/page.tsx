@@ -10,11 +10,13 @@ const DashboardPage = () => {
   return (
     <>
       <h2 className="text-2xl font-semibold mb-4 mt-4">Dashboard</h2>
-      <DateFilters />
-      <MonthProgress />
-      <DashBudgetList />
-      <Balance />
-      <Summary />
+      <div className="flex flex-col space-y-4">
+        <DateFilters />
+        <MonthProgress />
+        <DashBudgetList />
+        <Balance />
+        <Summary />
+      </div>
     </>
   );
 };

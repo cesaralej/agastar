@@ -1,11 +1,13 @@
 import categories from "@/data/categories";
-import DashBudgetItem from "./DashBudgetItem";
 import { Category } from "@/types";
 import { useBudgets } from "@/context/BudgetContext";
 import { useTransactions } from "@/context/TransactionContext";
 import { useRecurrings } from "@/context/RecurringContext";
 import { useDate } from "@/context/DateContext";
+import DashBudgetPie from "./DashBudgetPie";
 import Spinner from "@/components/Spinner";
+
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const DashBudgetList = () => {
   const {
@@ -73,28 +75,37 @@ const DashBudgetList = () => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-8">
-      {defaults.map((budget) => {
-        const categoryData = categories.find(
-          (category) => category.name === budget.category
-        ) as Category;
-        //console.log("BP categoryData: ", categoryData);
+    <Card>
+      <CardHeader>
+        <CardTitle>Budget</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {defaults.map((budget) => {
+            const categoryData = categories.find(
+              (category) => category.name === budget.category
+            ) as Category;
+            //console.log("BP categoryData: ", categoryData);
 
-        return (
-          <DashBudgetItem
-            key={budget.id || `${budget.category}`}
-            budget={budget} // Pass the entire budget object
-            spent={
-              spentPerYearMonthCategory[selectedYear]?.[selectedMonth]?.[
-                budget.category
-              ] || 0
-            }
-            icon={categoryData.icon}
-            color={categoryData.color}
-          />
-        );
-      })}
-    </div>
+            return (
+              <>
+                <DashBudgetPie
+                  key={budget.id || `${budget.category}`}
+                  budget={budget} // Pass the entire budget object
+                  spent={
+                    spentPerYearMonthCategory[selectedYear]?.[selectedMonth]?.[
+                      budget.category
+                    ] || 0
+                  }
+                  icon={categoryData.icon}
+                  color={categoryData.hexColor}
+                />
+              </>
+            );
+          })}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 export default DashBudgetList;

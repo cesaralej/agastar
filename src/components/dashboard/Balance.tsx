@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useTransactions } from "@/context/TransactionContext";
 import { useDate } from "@/context/DateContext";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Spinner from "@/components/Spinner";
 import { FaMoneyBillAlt, FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { Transaction } from "@/types";
@@ -79,48 +80,53 @@ const Balance = () => {
   }
 
   return (
-    <div className=" bg-white shadow-lg rounded-lg pl-6 pr-6  mt-8">
-      {/* Total Income */}
-      <div className="flex justify-between items-center py-4 border-b">
-        <div className="flex items-center space-x-2">
-          <FaMoneyBillAlt className="text-green-600" />
-          <span className="text-lg text-gray-700">Total Income</span>
+    <Card>
+      <CardHeader>
+        <CardTitle>Balance</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {/* Total Income */}
+        <div className="flex justify-between items-center py-4 border-b">
+          <div className="flex items-center space-x-2">
+            <FaMoneyBillAlt className="text-green-600" />
+            <span className="text-lg text-gray-700">Total Income</span>
+          </div>
+          <div className="text-xl font-bold text-green-600">
+            {summary.totalIncome?.toFixed(0)}€
+          </div>
         </div>
-        <div className="text-xl font-bold text-green-600">
-          {summary.totalIncome?.toFixed(0)}€
-        </div>
-      </div>
 
-      {/* Total Expenses */}
-      <div className="flex justify-between items-center py-4 border-b ">
-        <div className="flex items-center space-x-2">
-          <FaArrowDown className="text-red-600" />
-          <span className="text-lg text-gray-700">Total Expenses</span>
+        {/* Total Expenses */}
+        <div className="flex justify-between items-center py-4 border-b ">
+          <div className="flex items-center space-x-2">
+            <FaArrowDown className="text-red-600" />
+            <span className="text-lg text-gray-700">Total Expenses</span>
+          </div>
+          <div className="text-xl font-bold text-red-600">
+            {summary.totalExpenses?.toFixed(0)}€
+          </div>
         </div>
-        <div className="text-xl font-bold text-red-600">
-          {summary.totalExpenses?.toFixed(0)}€
-        </div>
-      </div>
 
-      {/* Balance */}
-      <div className="flex justify-between items-center py-4">
-        <div className="flex items-center space-x-2">
-          <FaArrowUp
-            className={`text-xl ${
+        {/* Balance */}
+        <div className="flex justify-between items-center py-4">
+          <div className="flex items-center space-x-2">
+            <FaArrowUp
+              className={`text-xl ${
+                summary.balance >= 0 ? "text-green-600" : "text-red-600"
+              }`}
+            />
+            <span className="text-lg text-gray-700">Balance</span>
+          </div>
+          <div
+            className={`text-xl font-bold ${
               summary.balance >= 0 ? "text-green-600" : "text-red-600"
             }`}
-          />
-          <span className="text-lg text-gray-700">Balance</span>
+          >
+            {summary.balance.toFixed(0)}€
+          </div>
         </div>
-        <div
-          className={`text-xl font-bold ${
-            summary.balance >= 0 ? "text-green-600" : "text-red-600"
-          }`}
-        >
-          {summary.balance.toFixed(0)}€
-        </div>
-      </div>
-    </div>
+      </CardContent>
+    </Card>
   );
 };
 export default Balance;

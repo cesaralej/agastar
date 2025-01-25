@@ -19,6 +19,7 @@ const chartConfig = {
 const ExpensesChart = () => {
   const { selectedMonth, selectedYear } = useDate();
   const { calculateSpentPerDay } = useTransactions();
+  console.log("EC Render");
 
   const data = calculateSpentPerDay(selectedMonth, selectedYear);
   const chartData = Object.entries(data).map(([, value]) => ({
@@ -27,7 +28,11 @@ const ExpensesChart = () => {
   }));
 
   return (
-    <ChartContainer config={chartConfig} className="max-h-[50px] w-full">
+    <ChartContainer
+      config={chartConfig}
+      className="max-h-[50px] w-full"
+      key={selectedMonth}
+    >
       <BarChart accessibilityLayer data={chartData}>
         <ChartTooltip content={<ChartTooltipContent />} />
         <Bar dataKey="Spent" fill="var(--color-desktop)" radius={4} />
