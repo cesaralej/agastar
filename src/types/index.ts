@@ -1,4 +1,4 @@
-import { CategoryType } from "@/data/categoriesv2";
+import { CategoryType } from "@/data/categories";
 import { FieldValue } from "firebase/firestore";
 export const ACCOUNTS = ["credit", "savings"] as const;
 export const TYPES = ["income", "expense"] as const;

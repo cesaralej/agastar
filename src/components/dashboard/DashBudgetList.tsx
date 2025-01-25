@@ -1,4 +1,4 @@
-import categories from "@/data/categoriesv2";
+import categories from "@/data/categories";
 import DashBudgetItem from "./DashBudgetItem";
 import { Category } from "@/types";
 import { useBudgets } from "@/context/BudgetContext";

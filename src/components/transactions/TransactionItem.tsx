@@ -1,13 +1,12 @@
 import { useState } from "react";
 import { useTransactions } from "@/context/TransactionContext";
 import categories from "@/data/categories";
+import { Category } from "@/types";
 import { HiPlusSm, HiMinusSm, HiPencil, HiTrash } from "react-icons/hi";
 import { FaCreditCard, FaWallet, FaCoins } from "react-icons/fa";
 import { useToast } from "@/hooks/use-toast";
 
 import { Transaction } from "@/types";
-
-type CategoryKey = keyof typeof categories;
 
 const TransactionItem = ({
   transaction,
@@ -51,11 +50,13 @@ const TransactionItem = ({
     return text;
   };
 
-  const category = categories[transaction.category as CategoryKey];
+  const categoryData = categories.find(
+    (category) => category.name === transaction.category
+  ) as Category;
 
   //These placeholders dont work because it breaks when no category is found
-  const categoryIcon = category?.icon || <FaCoins />;
-  const categoryColor = category?.color || "bg-gray-50"; // Default light gray
+  const categoryIcon = categoryData.icon || <FaCoins />;
+  const categoryColor = categoryData.color || "bg-gray-50"; // Default light gray
 
   const accountIcon =
     transaction.account === "savings" ? <FaWallet /> : <FaCreditCard />;

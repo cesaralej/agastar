@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { categories, CategoryType } from "@/data/categoriesv2";
+import { categories, CategoryType } from "@/data/categories";
 
 import {
   Select,
