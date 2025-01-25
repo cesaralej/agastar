@@ -38,7 +38,7 @@ const TransactionFilter: React.FC<FilterProps> = ({ onFilterChange }) => {
           defaultValue={selectedCategory}
           onValueChange={setSelectedCategory}
         >
-          <SelectTrigger className="w-[150px] bg-white">
+          <SelectTrigger className=" bg-white">
             <SelectValue placeholder="Select a category" />
           </SelectTrigger>
           <SelectContent>

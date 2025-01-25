@@ -33,8 +33,8 @@ export const categories = [
     hexColor: "#d1fae5",
   },
   {
-    name: "transportation",
-    label: "Transportation",
+    name: "rides",
+    label: "Rides",
     icon: <FaTaxi />,
     color: "bg-yellow-100",
     hexColor: "#fef9c3",
