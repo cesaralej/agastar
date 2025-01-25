@@ -28,6 +28,10 @@ export interface TransactionContextType {
   ) => Promise<void>;
   deleteTransaction: (transactionId: string) => Promise<void>;
   calculateIncomeForMonth: (year: number, month: number) => number;
+  calculateSpentPerDay: (
+    year: number,
+    month: number
+  ) => { day: number; amount: number }[];
   spentPerYearMonthCategory: Record<
     number,
     Record<number, Record<string, number>>
@@ -208,16 +212,20 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     }
   };
 
+  const filterTransactions = (month?: number, year?: number) => {
+    return transactions.filter((transaction) => {
+      const tYear = new Date(transaction.effectiveDate).getFullYear();
+      const yMonth = new Date(transaction.effectiveDate).getMonth();
+      const matchesYear = year == null || tYear === year;
+      const matchesMonth = month == null || yMonth === month;
+      return matchesMonth && matchesYear;
+    });
+  };
+
   const calculateIncomeForMonth = (month: number, year: number): number => {
-    const income = transactions
+    const income = filterTransactions(month, year)
       .filter((transaction) => transaction.type === "income")
       .filter((transaction) => !transaction.isCreditCardPayment)
-      .filter((transaction) => {
-        const tYear = new Date(transaction.effectiveDate).getFullYear();
-        const yMonth = new Date(transaction.effectiveDate).getMonth();
-        return tYear === year && yMonth === month;
-      })
-
       .reduce((acc, transaction) => acc + Number(transaction.amount), 0);
     return income;
   };
@@ -245,6 +253,38 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
       return acc;
     }, {} as Record<number, Record<number, Record<string, number>>>);
 
+  const calculateSpentPerDay = (
+    month: number,
+    year: number
+  ): { day: number; amount: number }[] => {
+    const daysInMonth = new Date(year, month + 1, 0).getDate();
+    const allDays = Array.from({ length: daysInMonth }, (_, day) => ({
+      day: day + 1,
+      amount: 0,
+    }));
+    const filteredTransactions = filterTransactions(month, year)
+      .filter((transaction) => transaction.type === "expense")
+      .filter((transaction) => transaction.isCreditCardPayment === false);
+    const spentPerDay = filteredTransactions.reduce((acc, transaction) => {
+      const transactionDate = new Date(transaction.effectiveDate);
+      const day = transactionDate.getDate();
+
+      if (!acc[day]) {
+        acc[day] = 0;
+      }
+
+      // Add the transaction amount
+      acc[day] += Number(transaction.amount);
+      return acc;
+    }, {} as Record<number, number>);
+
+    const result = allDays.map((entry) => ({
+      day: entry.day, // Day number
+      amount: spentPerDay[entry.day] ?? 0, // Override amount if it exists in the aggregated data
+    }));
+    return result;
+  };
+
   const value = {
     transactions,
     loading,
@@ -254,6 +294,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     deleteTransaction,
     calculateIncomeForMonth,
     spentPerYearMonthCategory,
+    calculateSpentPerDay,
   };
 
   return (

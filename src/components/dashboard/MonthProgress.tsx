@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 
 import { useDate } from "@/context/DateContext";
 
+import ExpensesChart from "./ExpensesChart";
+
 const MonthProgress = () => {
   const { selectedMonth, selectedYear } = useDate();
   const [progress, setProgress] = useState(0);
@@ -55,6 +57,7 @@ const MonthProgress = () => {
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <h2 className="text-lg font-semibold mb-4">Month Progress</h2>
+      <ExpensesChart />
       <div className="relative h-8 bg-gray-200 rounded-full overflow-hidden">
         <div
           className="absolute top-0 left-0 h-full bg-blue-500 rounded-full transition-width duration-500 ease-in-out" // Added transition
