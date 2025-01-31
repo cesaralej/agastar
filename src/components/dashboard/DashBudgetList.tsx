@@ -10,12 +10,7 @@ import Spinner from "@/components/Spinner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const DashBudgetList = () => {
-  const {
-    budgets: globalBudgets,
-    getSumOfBudgets,
-    loading,
-    error,
-  } = useBudgets();
+  const { getSumOfBudgets, filterBudgets, loading, error } = useBudgets();
   const { calculateIncomeForMonth, spentPerYearMonthCategory } =
     useTransactions();
   const { totalRecurring } = useRecurrings();
@@ -51,7 +46,7 @@ const DashBudgetList = () => {
         };
       }
 
-      const existingBudget = globalBudgets.find(
+      const existingBudget = filterBudgets(selectedMonth, selectedYear).find(
         (budget) => budget.category === category.name
       );
 

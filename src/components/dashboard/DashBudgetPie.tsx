@@ -39,7 +39,7 @@ const DashBudgetPie = ({ budget, spent, icon, color }: BudgetPieProps) => {
   const chartData = [{ item: "spent", amount: percentageUsed, fill: color }];
 
   const getRemainingColor = (remaining: number) => {
-    return remaining < 0 ? "text-red-500" : "text-gray-700";
+    return remaining < 1 ? "text-red-500" : "text-gray-700";
   };
 
   return (
