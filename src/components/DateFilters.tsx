@@ -27,7 +27,7 @@ const DateFilters = () => {
     useDate();
 
   return (
-    <div className="flex justify-between items-center mb-4">
+    <div className="flex justify-between items-center ">
       <div className="flex gap-4 ">
         <Select
           defaultValue={String(selectedYear)}

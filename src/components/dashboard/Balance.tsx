@@ -3,7 +3,7 @@ import { useTransactions } from "@/context/TransactionContext";
 import { useDate } from "@/context/DateContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Spinner from "@/components/Spinner";
-import { FaMoneyBillAlt, FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 import { Transaction } from "@/types";
 
 const Balance = () => {
@@ -85,22 +85,22 @@ const Balance = () => {
         <CardTitle>Balance</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Total Income */}
+        {/* Total Income
         <div className="flex justify-between items-center py-4 border-b">
           <div className="flex items-center space-x-2">
             <FaMoneyBillAlt className="text-green-600" />
-            <span className="text-lg text-gray-700">Total Income</span>
+            <span className="text-lg text-gray-700">Income</span>
           </div>
           <div className="text-xl font-bold text-green-600">
             {summary.totalIncome?.toFixed(0)}€
           </div>
-        </div>
+        </div> */}
 
         {/* Total Expenses */}
         <div className="flex justify-between items-center py-4 border-b ">
           <div className="flex items-center space-x-2">
             <FaArrowDown className="text-red-600" />
-            <span className="text-lg text-gray-700">Total Expenses</span>
+            <span className="text-lg text-gray-700">Expenses</span>
           </div>
           <div className="text-xl font-bold text-red-600">
             {summary.totalExpenses?.toFixed(0)}€
@@ -111,7 +111,7 @@ const Balance = () => {
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-2">
             <FaArrowUp
-              className={`text-xl ${
+              className={`text-lg ${
                 summary.balance >= 0 ? "text-green-600" : "text-red-600"
               }`}
             />

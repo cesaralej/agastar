@@ -7,8 +7,10 @@ import BudgetList from "@/components/budget/BudgetList";
 const BudgetPage = () => {
   return (
     <>
-      <h2 className="text-2xl font-semibold mb-4 mt-4">Budget</h2>
-      <DateFilters />
+      <div className="flex justify-between items-center mb-4 mt-4">
+        <h2 className="text-2xl font-semibold">Budget</h2>
+        <DateFilters />
+      </div>
       <BudgetSummary />
       <BudgetList />
     </>

@@ -26,7 +26,7 @@ const BudgetSummary = () => {
         </div>
         <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">Budgeted</h3>
-          <p className="text-xl font-bold">{totalBudgets.toFixed(0)}€</p>
+          <p className="text-xl font-bold">{budgetPercentage.toFixed(0)}%</p>
         </div>
 
         <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
@@ -42,7 +42,7 @@ const BudgetSummary = () => {
           </p>
         </div>
       </div>
-      <div className="w-full bg-gray-300 rounded-full h-2 mt-4">
+      {/* <div className="w-full bg-gray-300 rounded-full h-2 mt-4">
         <div
           className={`h-2 rounded-full ${
             exceedsIncome ? "bg-red-500" : "bg-green-500"
@@ -56,7 +56,7 @@ const BudgetSummary = () => {
           {sumOfBudgets > incomeForMonth ? "Over Budget" : "Under Budget"}
         </span>
         <span className="text-sm">{`${budgetPercentage.toFixed(1)}%`}</span>
-      </div>
+      </div> */}
     </div>
   );
 };
