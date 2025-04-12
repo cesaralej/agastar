@@ -3,8 +3,13 @@ import { useTransactions } from "@/context/TransactionContext";
 import { useDate } from "@/context/DateContext";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Spinner from "@/components/Spinner";
-import { FaArrowDown, FaArrowUp } from "react-icons/fa";
+import { FaReceipt, FaEquals } from "react-icons/fa";
 import { Transaction } from "@/types";
+
+const formatNumberWithCommas = (number: number | undefined): string => {
+  if (number === undefined) return "0";
+  return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
 
 const Balance = () => {
   const { transactions, loading, error } = useTransactions();
@@ -82,47 +87,41 @@ const Balance = () => {
   return (
     <Card>
       <CardHeader>
-        <CardTitle>Balance</CardTitle>
+        <CardTitle>Overview</CardTitle>
       </CardHeader>
       <CardContent>
-        {/* Total Income
-        <div className="flex justify-between items-center py-4 border-b">
-          <div className="flex items-center space-x-2">
-            <FaMoneyBillAlt className="text-green-600" />
-            <span className="text-lg text-gray-700">Income</span>
-          </div>
-          <div className="text-xl font-bold text-green-600">
-            {summary.totalIncome?.toFixed(0)}€
-          </div>
-        </div> */}
-
         {/* Total Expenses */}
-        <div className="flex justify-between items-center py-4 border-b ">
-          <div className="flex items-center space-x-2">
-            <FaArrowDown className="text-red-600" />
-            <span className="text-gray-700">Expenses</span>
+
+        <div className="flex items-center py-2  border-b ">
+          <div className="flex items-center justify-center">
+            <FaReceipt className={`text-lg text-blue-500`} />
           </div>
-          <div className="text-xl font-bold text-red-600">
-            {summary.totalExpenses?.toFixed(0)}€
+          <div className="ml-4">
+            <div className="text-gray-700">Expenses</div>
+            <div className={`text-xl font-bold text-blue-500`}>
+              {formatNumberWithCommas(summary.totalExpenses)}€
+            </div>
           </div>
         </div>
 
         {/* Balance */}
-        <div className="flex justify-between items-center py-4">
-          <div className="flex items-center space-x-2">
-            <FaArrowUp
+        <div className="flex items-center py-2">
+          <div className="flex items-center justify-center">
+            <FaEquals
               className={`text-lg ${
                 summary.balance >= 0 ? "text-green-600" : "text-red-600"
               }`}
             />
-            <span className="text-gray-700">Balance</span>
           </div>
-          <div
-            className={`text-xl font-bold ${
-              summary.balance >= 0 ? "text-green-600" : "text-red-600"
-            }`}
-          >
-            {summary.balance.toFixed(0)}€
+          <div className="ml-4">
+            <div className="text-gray-700">Balance</div>
+            <div
+              className={`text-xl font-bold ${
+                summary.balance >= 0 ? "text-green-600" : "text-red-600"
+              }`}
+            >
+              {formatNumberWithCommas(summary.balance)}€
+            </div>
           </div>
         </div>
       </CardContent>

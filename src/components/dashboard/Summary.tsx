@@ -6,6 +6,11 @@ import { FaWallet, FaCreditCard } from "react-icons/fa";
 import { Transaction } from "@/types";
 import Spinner from "@/components/Spinner";
 
+const formatNumberWithCommas = (number: number | undefined): string => {
+  if (number === undefined) return "0";
+  return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 const Summary = () => {
   const { transactions, loading, error } = useTransactions();
   const [summary, setSummary] = useState({
@@ -62,24 +67,28 @@ const Summary = () => {
       </CardHeader>
       <CardContent>
         {/* Savings */}
-        <div className="flex justify-between items-center py-4 border-b">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center py-2 border-b">
+          <div className="flex items-center justify-center">
             <FaWallet className="text-yellow-600" />
-            <span className="text-gray-700">Savings</span>
           </div>
-          <div className="text-xl font-bold text-yellow-600">
-            {summary.savings.toFixed(0)}€
+          <div className="ml-4">
+            <div className="text-gray-700">Savings</div>
+            <div className={`text-xl font-bold text-yellow-600`}>
+              {formatNumberWithCommas(summary.savings)}€
+            </div>
           </div>
         </div>
 
         {/* Credit */}
-        <div className="flex justify-between items-center py-4">
-          <div className="flex items-center space-x-2">
+        <div className="flex items-center py-2">
+          <div className="flex items-center justify-center">
             <FaCreditCard className="text-indigo-600" />
-            <span className="text-gray-700">Credit</span>
           </div>
-          <div className="text-xl font-bold text-indigo-600">
-            {summary.credit.toFixed(0)}€
+          <div className="ml-4">
+            <div className="text-gray-700">Credit</div>
+            <div className={`text-xl font-bold text-indigo-600`}>
+              {formatNumberWithCommas(summary.credit)}€
+            </div>
           </div>
         </div>
       </CardContent>
