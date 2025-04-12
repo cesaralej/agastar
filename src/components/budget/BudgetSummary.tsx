@@ -2,6 +2,7 @@ import { useTransactions } from "@/context/TransactionContext";
 import { useBudgets } from "@/context/BudgetContext";
 import { useRecurrings } from "@/context/RecurringContext";
 import { useDate } from "@/context/DateContext";
+import { Card } from "@/components/ui/card";
 
 const BudgetSummary = () => {
   const { calculateIncomeForMonth } = useTransactions();
@@ -18,18 +19,18 @@ const BudgetSummary = () => {
   const budgetPercentage = Math.min((totalBudgets / incomeForMonth) * 100, 100);
 
   return (
-    <div className="mt-4">
-      <div className="grid grid-cols-3 md:grid-cols-3 gap-4  mt-4">
-        <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
+    <>
+      <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
+        <Card className="p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">Income</h3>
           <p className="text-xl font-bold">{incomeForMonth.toFixed(0)}€</p>
-        </div>
-        <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
+        </Card>
+        <Card className="p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">Budgeted</h3>
           <p className="text-xl font-bold">{budgetPercentage.toFixed(0)}%</p>
-        </div>
+        </Card>
 
-        <div className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center justify-center">
+        <Card className="p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">
             {exceedsIncome ? "Over" : "Remaining"}
           </h3>
@@ -40,7 +41,7 @@ const BudgetSummary = () => {
           >
             {remaining.toFixed(0)}€
           </p>
-        </div>
+        </Card>
       </div>
       {/* <div className="w-full bg-gray-300 rounded-full h-2 mt-4">
         <div
@@ -57,7 +58,7 @@ const BudgetSummary = () => {
         </span>
         <span className="text-sm">{`${budgetPercentage.toFixed(1)}%`}</span>
       </div> */}
-    </div>
+    </>
   );
 };
 export default BudgetSummary;

@@ -1,5 +1,6 @@
 import { ReactNode, useState } from "react";
 import { Budget } from "@/types";
+import { Card } from "@/components/ui/card";
 
 interface BudgetItemProps {
   budget: Budget;
@@ -60,7 +61,7 @@ const BudgetItem = ({
   };
 
   return (
-    <div className="bg-white p-4 rounded-lg shadow-md ">
+    <Card className="p-4">
       <div className="flex justify-between items-center">
         <div className="flex items-center gap-2">
           <div
@@ -139,7 +140,7 @@ const BudgetItem = ({
           </>
         )}
       </div>
-    </div>
+    </Card>
   );
 };
 

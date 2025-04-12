@@ -3,6 +3,8 @@ import { useTransactions } from "@/context/TransactionContext";
 import { useToast } from "@/hooks/use-toast";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Form,
@@ -34,6 +36,9 @@ import {
 } from "@/components/ui/popover";
 import { Checkbox } from "@/components/ui/checkbox";
 
+import { LuArrowLeftRight, LuArrowUp } from "react-icons/lu";
+import { FaWallet, FaCreditCard } from "react-icons/fa";
+
 import { categories, CategoryType } from "@/data/categories";
 import { ACCOUNTS, TYPES, Transaction, TransactionData } from "@/types";
 const categoryNames = categories.map((category) => category.name);
@@ -55,6 +60,7 @@ const schema = z.object({
   comment: z.string().optional(),
 });
 
+//This logic could go in the context, not here
 const mergeDateAndTime = (date: Date, time: string) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-indexed
@@ -93,7 +99,11 @@ const TransactionForm = ({
     },
   });
 
-  console.log("TF rendered");
+  // TODO probar esto o quitarlo si no funciona
+  const { setFocus } = useForm<TransactionData>();
+  useEffect(() => {
+    setFocus("amount");
+  }, [setFocus]);
 
   const isCreditCardPayment = form.watch("isCreditCardPayment");
 
@@ -185,13 +195,21 @@ const TransactionForm = ({
             <FormItem>
               <FormLabel>Amount</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  inputMode="decimal"
-                  placeholder="50"
-                  aria-label="Amount"
-                  {...field}
-                />
+                <div className="relative">
+                  {" "}
+                  {/* Container for prefix and input */}
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                    €
+                  </div>
+                  <Input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="50.00"
+                    aria-label="Amount"
+                    className="pl-7"
+                    {...field}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -223,24 +241,35 @@ const TransactionForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Type</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={isCreditCardPayment}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select the type of transaction" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {TYPES.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type.charAt(0).toUpperCase() + type.slice(1)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <div className="w-full">
+                      <ToggleGroup
+                        type="single"
+                        variant="outline" // Or default
+                        value={field.value}
+                        onValueChange={(value) => {
+                          if (value) field.onChange(value); // Prevent unselecting
+                        }}
+                        disabled={isCreditCardPayment}
+                        className="inline-flex"
+                      >
+                        <ToggleGroupItem
+                          value={TYPES[1]}
+                          aria-label="Toggle expense"
+                        >
+                          {TYPES[1].charAt(0).toUpperCase() + TYPES[1].slice(1)}{" "}
+                          <LuArrowLeftRight className="inline-block mr-1 text-blue-500" />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem
+                          value={TYPES[0]}
+                          aria-label="Toggle income"
+                        >
+                          {TYPES[0].charAt(0).toUpperCase() + TYPES[0].slice(1)}{" "}
+                          <LuArrowUp className="inline-block mr-1 text-green-500" />
+                        </ToggleGroupItem>
+                      </ToggleGroup>
+                    </div>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -251,24 +280,37 @@ const TransactionForm = ({
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Account</FormLabel>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    disabled={isCreditCardPayment}
-                  >
-                    <FormControl>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select the account used" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {ACCOUNTS.map((account) => (
-                        <SelectItem key={account} value={account}>
-                          {account.charAt(0).toUpperCase() + account.slice(1)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <FormControl>
+                    <div className="w-full">
+                      <ToggleGroup
+                        type="single"
+                        variant="outline" // Or default
+                        value={field.value}
+                        onValueChange={(value) => {
+                          if (value) field.onChange(value); // Prevent unselecting
+                        }}
+                        disabled={isCreditCardPayment}
+                        className="inline-flex"
+                      >
+                        <ToggleGroupItem
+                          value={ACCOUNTS[1]}
+                          aria-label="Toggle expense"
+                        >
+                          {ACCOUNTS[1].charAt(0).toUpperCase() +
+                            ACCOUNTS[1].slice(1)}{" "}
+                          <FaWallet className="text-yellow-600" />
+                        </ToggleGroupItem>
+                        <ToggleGroupItem
+                          value={ACCOUNTS[0]}
+                          aria-label="Toggle income"
+                        >
+                          {ACCOUNTS[0].charAt(0).toUpperCase() +
+                            ACCOUNTS[0].slice(1)}{" "}
+                          <FaCreditCard className="text-indigo-600" />
+                        </ToggleGroupItem>
+                      </ToggleGroup>
+                    </div>
+                  </FormControl>
                   <FormMessage />
                 </FormItem>
               )}
@@ -293,8 +335,15 @@ const TransactionForm = ({
                     <SelectContent>
                       {filteredCategories.map((category) => (
                         <SelectItem key={category.name} value={category.name}>
-                          {category.name.charAt(0).toUpperCase() +
-                            category.name.slice(1)}
+                          <div className="flex items-center space-x-2">
+                            {category.icon && (
+                              <span className="text-lg">{category.icon}</span>
+                            )}
+                            <span>
+                              {category.name.charAt(0).toUpperCase() +
+                                category.name.slice(1)}
+                            </span>
+                          </div>
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -346,6 +395,33 @@ const TransactionForm = ({
             </FormItem>
           )}
         />
+        {/*  Esto agregarlo despues para reemplazar el otro datepicker
+        <FormField
+          control={form.control}
+          name="date"
+          render={({ field }) => (
+            <FormItem className="flex flex-col">
+              <FormField
+                control={form.control}
+                name="isNextMonth"
+                render={({ field: checkboxField }) => (
+                  <FormItem className="flex items-center space-x-2">
+                    <FormControl>
+                      <Checkbox
+                        checked={checkboxField.value}
+                        onCheckedChange={checkboxField.onChange}
+                      />
+                    </FormControl>
+                    <FormLabel className="text-sm font-normal">
+                      For Next Month
+                    </FormLabel>
+                  </FormItem>
+                )}
+              />
+              <FormMessage />
+            </FormItem>
+          )}
+        /> */}
         {isEdit && (
           <>
             <FormField
@@ -448,7 +524,7 @@ const TransactionForm = ({
                   htmlFor="terms1"
                   className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                 >
-                  Credit Card Payment
+                  Paying Off Credit Card Bill?
                 </FormLabel>
               </div>
               <FormMessage />
