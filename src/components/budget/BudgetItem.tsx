@@ -113,27 +113,28 @@ const BudgetItem = ({
                   Remaining: {remaining}€
                 </p>
               </div>
-
               <div className="w-2/5">
                 <div className="w-full bg-gray-200 rounded-full h-6 relative">
                   {" "}
                   {/* Added relative positioning */}
-                  <div
-                    className={`h-full rounded-full ${getProgressBarColor(
-                      percentageUsed
-                    )} absolute left-0 top-0 flex items-center justify-center`}
-                    style={{
-                      width: `${Math.max(percentageUsed, 0)}%`,
-                      transition: "width 0.3s ease-in-out",
-                    }} // Ensure width doesn't go below 0 and add smooth transitions
-                  >
-                    {percentageUsed > 30 && ( // Only show percentage if greater than 0
-                      <span className="text-sm text-white font-medium px-1 whitespace-nowrap">
-                        {" "}
-                        {percentageUsed.toFixed(0)}%{" "}
-                      </span>
-                    )}
-                  </div>
+                  {percentageUsed > 10 && (
+                    <div
+                      className={`h-full rounded-full ${getProgressBarColor(
+                        percentageUsed
+                      )} absolute left-0 top-0 flex items-center justify-center`}
+                      style={{
+                        width: `${Math.max(percentageUsed, 0)}%`,
+                        transition: "width 0.3s ease-in-out",
+                      }} // Ensure width doesn't go below 0 and add smooth transitions
+                    >
+                      {percentageUsed > 30 && ( // Only show percentage if greater than 0
+                        <span className="text-sm text-white font-medium px-1 whitespace-nowrap">
+                          {" "}
+                          {percentageUsed.toFixed(0)}%{" "}
+                        </span>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
