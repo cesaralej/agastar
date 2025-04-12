@@ -6,13 +6,12 @@ import { PlusIcon } from "lucide-react";
 import { useRecurrings } from "@/context/RecurringContext";
 import RecurringDrawer from "@/components/recurring/RecurringDrawer";
 import { Recurring, RecurringData } from "@/types";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 const RecurringPage = () => {
   const { addRecurring, updateRecurring } = useRecurrings();
   const [showSheet, setShowSheet] = useState(false);
   const [editData, setEditData] = useState<Partial<Recurring> | null>(null);
-  const { toast } = useToast();
 
   const handleAdd = () => {
     setEditData(null);
@@ -22,30 +21,20 @@ const RecurringPage = () => {
   const onAdd = async (recurring: RecurringData) => {
     try {
       await addRecurring(recurring);
-      toast({
-        description: "Recurring expense added",
-      });
+      toast("Recurring expense added");
     } catch (error) {
       console.error("Error adding recurring:", error);
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-      });
+      toast.error("Uh oh! Something went wrong.");
     }
   };
 
   const onEdit = async (recurringId: string, recurring: RecurringData) => {
     try {
       await updateRecurring(recurringId, recurring);
-      toast({
-        description: "Recurring expense updated",
-      });
+      toast("Recurring expense updated");
     } catch (error) {
       console.error("Error updating recurring:", error);
-      toast({
-        variant: "destructive",
-        title: "Uh oh! Something went wrong.",
-      });
+      toast.error("Uh oh! Something went wrong.");
     }
   };
 

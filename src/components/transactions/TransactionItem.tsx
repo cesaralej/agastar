@@ -4,7 +4,7 @@ import categories from "@/data/categories";
 import { Category } from "@/types";
 import { HiPlusSm, HiMinusSm, HiPencil, HiTrash } from "react-icons/hi";
 import { FaCreditCard, FaWallet, FaCoins } from "react-icons/fa";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 
 import { Transaction } from "@/types";
 
@@ -17,7 +17,6 @@ const TransactionItem = ({
 }) => {
   const { deleteTransaction } = useTransactions();
   const [isHovering, setIsHovering] = useState(false);
-  const { toast } = useToast();
 
   const onEditClick = () => {
     onEdit(transaction);
@@ -27,9 +26,7 @@ const TransactionItem = ({
     try {
       if (window.confirm("Are you sure you want to delete this transaction?")) {
         await deleteTransaction(transaction.id);
-        toast({
-          title: "Transaction deleted",
-        });
+        toast("Transaction deleted");
       }
     } catch (error) {
       console.error("Error deleting transaction:", error);

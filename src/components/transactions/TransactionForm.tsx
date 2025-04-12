@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useTransactions } from "@/context/TransactionContext";
-import { useToast } from "@/hooks/use-toast";
+import { toast } from "sonner";
 import * as z from "zod";
 import { useForm } from "react-hook-form";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
@@ -82,7 +82,6 @@ const TransactionForm = ({
   const { addTransaction, updateTransaction } = useTransactions();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showComments, setShowComments] = useState(false);
-  const { toast } = useToast();
   const form = useForm<TransactionData>({
     resolver: zodResolver(schema),
     defaultValues: {
@@ -151,15 +150,10 @@ const TransactionForm = ({
       if (initialData?.id) {
         try {
           await updateTransaction(initialData.id, data);
-          toast({
-            description: "Transaction updated",
-          });
+          toast("Transaction updated");
         } catch (error) {
           console.error("Error updating transaction:", error);
-          toast({
-            variant: "destructive",
-            title: "Uh oh! Something went wrong.",
-          });
+          toast.error("Uh oh! Something went wrong.");
         }
       } else {
         console.error("No transaction ID found for editing");
@@ -169,15 +163,10 @@ const TransactionForm = ({
       console.log("Date:", data.date);
       try {
         await addTransaction(data);
-        toast({
-          description: "Transaction added",
-        });
+        toast("Transaction added");
       } catch (error) {
         console.error("Error adding transaction:", error);
-        toast({
-          variant: "destructive",
-          title: "Uh oh! Something went wrong.",
-        });
+        toast.error("Uh oh! Something went wrong.");
       }
     }
     setShowSheet(false);
