@@ -9,6 +9,11 @@ interface BudgetItemProps {
   noEdit?: boolean;
 }
 
+const formatNumberWithCommas = (number: number | undefined): string => {
+  if (number === undefined) return "0";
+  return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 const DashBudgetItem = ({ budget, spent, icon, color }: BudgetItemProps) => {
   const remaining = budget.amount - spent;
   const percentageUsed =
@@ -38,7 +43,7 @@ const DashBudgetItem = ({ budget, spent, icon, color }: BudgetItemProps) => {
           </h3>
           <div>
             <p className={`text-lg font-bold ${getRemainingColor(remaining)}`}>
-              {remaining}€
+              {formatNumberWithCommas(remaining)}€
             </p>
           </div>
         </div>

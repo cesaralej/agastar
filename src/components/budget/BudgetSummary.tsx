@@ -4,6 +4,11 @@ import { useRecurrings } from "@/context/RecurringContext";
 import { useDate } from "@/context/DateContext";
 import { Card } from "@/components/ui/card";
 
+const formatNumberWithCommas = (number: number | undefined): string => {
+  if (number === undefined) return "0";
+  return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+};
+
 const BudgetSummary = () => {
   const { calculateIncomeForMonth } = useTransactions();
   const { getSumOfBudgets } = useBudgets();
@@ -23,7 +28,9 @@ const BudgetSummary = () => {
       <div className="grid grid-cols-3 md:grid-cols-3 gap-4">
         <Card className="p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">Income</h3>
-          <p className="text-xl font-bold">{incomeForMonth.toFixed(0)}€</p>
+          <p className="text-xl font-bold">
+            {formatNumberWithCommas(incomeForMonth)}€
+          </p>
         </Card>
         <Card className="p-4 flex flex-col items-center justify-center">
           <h3 className="font-medium text-lg">Budgeted</h3>
@@ -39,7 +46,7 @@ const BudgetSummary = () => {
               exceedsIncome ? "text-red-500" : "text-green-500"
             }`}
           >
-            {remaining.toFixed(0)}€
+            {formatNumberWithCommas(remaining)}€
           </p>
         </Card>
       </div>
