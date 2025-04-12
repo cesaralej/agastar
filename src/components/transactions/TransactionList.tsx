@@ -10,60 +10,79 @@ const TransactionList = ({
 }: {
   onEdit: (transaction: Transaction) => void;
 }) => {
-  const { transactions, loading, error } = useTransactions();
+  const { transactions: allTransactions, loading, error } = useTransactions();
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [searchTerm, setSearchTerm] = useState<string>("");
   const [filteredTransactions, setFilteredTransactions] = useState<
     Transaction[]
   >([]);
 
+  // Effect to apply filters whenever transactions, category, or search term change
   useEffect(() => {
-    setFilteredTransactions(transactions || []);
-  }, [transactions]);
+    // Start with the full list (or empty if none)
+    let result = allTransactions || [];
 
-  if (error) {
-    return <div>Error: {error.message}</div>;
-  }
-
-  if (loading) {
-    return <Spinner loading={loading} />;
-  }
-
-  const handleFilterChange = (filter: string | null) => {
-    if (filter) {
-      setFilteredTransactions(
-        (transactions || []).filter(
-          (transaction) => transaction.category === filter
-        )
+    // 1. Apply category filter
+    if (selectedCategory) {
+      result = result.filter(
+        (transaction) => transaction.category === selectedCategory
       );
-    } else {
-      setFilteredTransactions(transactions || []); // Reset to all transactions
     }
-  };
 
-  if (!filteredTransactions || filteredTransactions.length === 0) {
+    // 2. Apply search term filter (on the result of the category filter)
+    if (searchTerm) {
+      const lowerCaseSearchTerm = searchTerm.toLowerCase();
+      result = result.filter((transaction) =>
+        transaction.description.toLowerCase().includes(lowerCaseSearchTerm)
+      );
+    }
+
+    // Update the state holding the list to be displayed
+    setFilteredTransactions(result);
+  }, [allTransactions, selectedCategory, searchTerm]); // Dependencies
+
+  // --- Loading and Error States ---
+  if (error) {
     return (
-      <div className="container mx-auto mt-4">
-        <TransactionFilter onFilterChange={handleFilterChange} />
-        {loading ? (
-          <Spinner loading={loading} />
-        ) : (
-          <div className="container mx-auto px-4 py-8">
-            <p className="text-gray-500 text-center">
-              No transactions yet. Add some to see them here.
-            </p>
-          </div>
-        )}
+      <div className="text-red-600 text-center p-4">
+        Error loading transactions: {error.message}
       </div>
     );
   }
 
-  const groupedTransactions = filteredTransactions
-    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+  if (loading && !allTransactions?.length) {
+    return (
+      <div className="container mx-auto mt-4">
+        {/* Optionally show filters even when loading */}
+        {/* <TransactionFilter ... /> */}
+        <Spinner loading={true} />
+      </div>
+    );
+  }
+
+  // --- Handlers for Filter Changes ---
+  const handleCategoryChange = (category: string | null) => {
+    setSelectedCategory(category);
+  };
+
+  const handleSearchChange = (term: string) => {
+    setSearchTerm(term);
+  };
+
+  // --- Grouping and Sorting (Operate on filteredTransactions) ---
+  const groupedTransactions = filteredTransactions // Use the filtered list
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()) // Sort by date descending
     .reduce<Record<string, Transaction[]>>((acc, transaction) => {
+      // Consistent date formatting
       const date = new Date(transaction.date);
-      const day = date.toLocaleDateString("en-US", { day: "2-digit" });
-      const month = date.toLocaleDateString("en-US", { month: "short" });
-      const weekday = date.toLocaleDateString("en-US", { weekday: "long" });
-      const formattedDate = `${day} ${month} | ${weekday}`;
+      const options: Intl.DateTimeFormatOptions = {
+        day: "2-digit",
+        month: "short",
+        weekday: "long",
+      };
+      const formattedDate = date
+        .toLocaleDateString("en-US", options)
+        .replace(",", " |"); // Example: "12 Apr | Saturday"
 
       acc[formattedDate] = acc[formattedDate] || [];
       acc[formattedDate].push(transaction);
@@ -72,9 +91,24 @@ const TransactionList = ({
 
   return (
     <div className="container mx-auto mt-4">
-      <TransactionFilter onFilterChange={handleFilterChange} />
-      {loading ? (
-        <Spinner loading={loading} />
+      <TransactionFilter
+        selectedCategory={selectedCategory}
+        searchTerm={searchTerm}
+        onCategoryChange={handleCategoryChange}
+        onSearchChange={handleSearchChange}
+      />
+
+      {loading && <Spinner loading={loading} />}
+      {!loading && filteredTransactions.length === 0 ? (
+        <div className="container mx-auto px-4 py-8 text-center">
+          <p className="text-gray-500">
+            {
+              allTransactions && allTransactions.length > 0
+                ? "No transactions match your current filters." // Message when filters yield no results
+                : "No transactions yet. Add some to see them here." // Message when there are no transactions at all
+            }
+          </p>
+        </div>
       ) : (
         Object.entries(groupedTransactions).map(
           ([date, transactionsByDate]: [string, Transaction[]]) => (
@@ -82,6 +116,7 @@ const TransactionList = ({
               <h3 className="text-md text-gray-500 font-semibold mb-2">
                 {date}
               </h3>
+
               <div className="flex flex-col gap-4">
                 {transactionsByDate.map((transaction: Transaction) => (
                   <TransactionItem
