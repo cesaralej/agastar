@@ -65,7 +65,7 @@ const Summary = () => {
         <div className="flex justify-between items-center py-4 border-b">
           <div className="flex items-center space-x-2">
             <FaWallet className="text-yellow-600" />
-            <span className="text-lg text-gray-700">Savings</span>
+            <span className="text-gray-700">Savings</span>
           </div>
           <div className="text-xl font-bold text-yellow-600">
             {summary.savings.toFixed(0)}€
@@ -76,7 +76,7 @@ const Summary = () => {
         <div className="flex justify-between items-center py-4">
           <div className="flex items-center space-x-2">
             <FaCreditCard className="text-indigo-600" />
-            <span className="text-lg text-gray-700">Credit</span>
+            <span className="text-gray-700">Credit</span>
           </div>
           <div className="text-xl font-bold text-indigo-600">
             {summary.credit.toFixed(0)}€

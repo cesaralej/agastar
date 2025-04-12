@@ -100,7 +100,7 @@ const Balance = () => {
         <div className="flex justify-between items-center py-4 border-b ">
           <div className="flex items-center space-x-2">
             <FaArrowDown className="text-red-600" />
-            <span className="text-lg text-gray-700">Expenses</span>
+            <span className="text-gray-700">Expenses</span>
           </div>
           <div className="text-xl font-bold text-red-600">
             {summary.totalExpenses?.toFixed(0)}€
@@ -115,7 +115,7 @@ const Balance = () => {
                 summary.balance >= 0 ? "text-green-600" : "text-red-600"
               }`}
             />
-            <span className="text-lg text-gray-700">Balance</span>
+            <span className="text-gray-700">Balance</span>
           </div>
           <div
             className={`text-xl font-bold ${
