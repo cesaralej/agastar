@@ -32,7 +32,7 @@ const DashBudgetList = () => {
         return {
           id: `${category.name}-${selectedMonth}-${selectedYear}`,
           category: category.name,
-          amount: amount < 0 ? 0 : amount,
+          amount: (amount < 0 ? 0 : amount).toString(),
           month: selectedMonth,
           year: selectedYear,
         };
@@ -40,7 +40,7 @@ const DashBudgetList = () => {
         return {
           id: `${category.name}-${selectedMonth}-${selectedYear}`,
           category: category.name,
-          amount: totalRecurring,
+          amount: totalRecurring.toString(),
           month: selectedMonth,
           year: selectedYear,
         };
@@ -54,7 +54,7 @@ const DashBudgetList = () => {
         existingBudget || {
           id: `${category.name}-${selectedMonth}-${selectedYear}`,
           category: category.name,
-          amount: 0,
+          amount: "0",
           month: selectedMonth,
           year: selectedYear,
         }
@@ -80,13 +80,12 @@ const DashBudgetList = () => {
             const categoryData = categories.find(
               (category) => category.name === budget.category
             ) as Category;
-            //console.log("BP categoryData: ", categoryData);
 
             return (
               <>
                 <DashBudgetPie
                   key={budget.id || `${budget.category}`}
-                  budget={budget} // Pass the entire budget object
+                  budget={budget}
                   spent={
                     spentPerYearMonthCategory[selectedYear]?.[selectedMonth]?.[
                       budget.category
