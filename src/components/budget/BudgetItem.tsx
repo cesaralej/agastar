@@ -1,6 +1,24 @@
 import { ReactNode } from "react";
 import { Budget } from "@/types";
 import { Card } from "@/components/ui/card";
+import {
+  PolarGrid,
+  PolarRadiusAxis,
+  RadialBar,
+  RadialBarChart,
+} from "recharts";
+import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+
+const chartConfig = {
+  spent: {
+    label: "Spent",
+    color: "hsl(var(--chart-1))",
+  },
+  remaining: {
+    label: "Remaining",
+    color: "hsl(var(--chart-3))",
+  },
+} satisfies ChartConfig;
 
 interface BudgetItemProps {
   budget: Budget;
@@ -22,7 +40,6 @@ const BudgetItem = ({
   spent,
   icon,
   color,
-  noEdit,
   onEdit,
 }: BudgetItemProps) => {
   const remaining = Number(budget.amount) - spent;
@@ -36,74 +53,83 @@ const BudgetItem = ({
   };
 
   const getProgressBarColor = (percentage: number) => {
-    return percentage < 75 ? "bg-green-500" : "bg-red-500";
+    return percentage < 75 ? "#22C55E" : "#EF4444";
   };
 
   const getRemainingColor = (remaining: number) => {
     return remaining < 0 ? "text-red-500" : "text-green-500";
   };
 
+  const chartData = [
+    {
+      item: "spent",
+      amount: percentageUsed,
+      fill: getProgressBarColor(percentageUsed),
+    },
+  ];
+
   return (
-    <Card className="p-4">
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <div
-            className={`w-8 h-8 rounded-full flex items-center justify-center ${color}`}
-          >
-            {icon}
-          </div>
-          <h3 className="text-lg font-bold">
-            {budget.category.charAt(0).toUpperCase() + budget.category.slice(1)}
-          </h3>
-        </div>
-        {!noEdit && (
-          <button
-            className="text-blue-500"
-            onClick={onEditClick}
-            aria-label="Edit budget"
-          >
-            Edit
-          </button>
-        )}
-      </div>
-      <div>
-        <div>
-          <p className="text-sm text-gray-500">
-            Budget: {formatNumberWithCommas(Number(budget.amount))}€
-          </p>
-          <div className="flex justify-between items-center">
-            <div>
-              <p className={`text-sm ${getRemainingColor(remaining)}`}>
-                Remaining: {formatNumberWithCommas(remaining)}€
-              </p>
+    <Card className="cursor-pointer hover:shadow-lg transition-shadow duration-200 ease-in-out">
+      <button
+        className=""
+        onClick={onEditClick}
+        aria-label={`Edit budget for ${budget.category}`}
+        style={{ border: "none", background: "transparent", textAlign: "left" }}
+      >
+        <div className="flex justify-between items-center">
+          <div className="relative">
+            <ChartContainer
+              config={chartConfig}
+              className="mx-auto aspect-square w-24 h-24"
+            >
+              <RadialBarChart
+                data={chartData}
+                startAngle={90}
+                endAngle={percentageUsed * 3.6 + 90}
+                innerRadius={30}
+                outerRadius={60}
+              >
+                <PolarGrid
+                  gridType="circle"
+                  radialLines={false}
+                  stroke="none"
+                  className="first:fill-muted last:fill-background"
+                  polarRadius={[36, 24]}
+                />
+                <RadialBar dataKey="amount" background />
+                <PolarRadiusAxis
+                  tick={false}
+                  tickLine={false}
+                  axisLine={false}
+                ></PolarRadiusAxis>
+              </RadialBarChart>
+            </ChartContainer>
+            <div
+              className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-16 h-16 rounded-full text-lg ${color}`}
+            >
+              {icon}
             </div>
-            <div className="w-2/5">
-              <div className="w-full bg-gray-200 rounded-full h-6 relative">
-                {" "}
-                {/* Added relative positioning */}
-                {percentageUsed > 10 && (
-                  <div
-                    className={`h-full rounded-full ${getProgressBarColor(
-                      percentageUsed
-                    )} absolute left-0 top-0 flex items-center justify-center`}
-                    style={{
-                      width: `${Math.max(percentageUsed, 0)}%`,
-                      transition: "width 0.3s ease-in-out",
-                    }} // Ensure width doesn't go below 0 and add smooth transitions
-                  >
-                    {percentageUsed > 30 && ( // Only show percentage if greater than 0
-                      <span className="text-sm text-white font-medium px-1 whitespace-nowrap">
-                        {" "}
-                        {percentageUsed.toFixed(0)}%{" "}
-                      </span>
-                    )}
-                  </div>
-                )}
+          </div>
+          <div className="flex-1 pr-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-bold">
+                {budget.category.charAt(0).toUpperCase() +
+                  budget.category.slice(1)}
+              </h3>
+            </div>
+            <div>
+              <div>
+                <p className="">
+                  {formatNumberWithCommas(Number(budget.amount))}€
+                </p>
+                <p className={`text-sm ${getRemainingColor(remaining)}`}>
+                  Left: {formatNumberWithCommas(remaining)}€
+                </p>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </button>
     </Card>
   );
 };

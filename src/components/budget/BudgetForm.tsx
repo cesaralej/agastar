@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useBudgets } from "@/context/BudgetContext";
 import { toast } from "sonner";
 import * as z from "zod";
@@ -35,14 +35,24 @@ const BudgetForm = ({
 }) => {
   const { updateBudget } = useBudgets();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const form = useForm<Budget>({
     resolver: zodResolver(schema),
     defaultValues: {
-      // TODO revisar esto de string vs number
       amount: initialData?.amount?.toString() || "",
-      category: initialData?.category || "luxury",
     },
   });
+
+  useEffect(() => {
+    if (
+      initialData?.category === "luxury" ||
+      initialData?.category === "utilities"
+    ) {
+      setIsDisabled(true);
+    } else {
+      setIsDisabled(false);
+    }
+  }, [initialData?.category, form]);
 
   const handleSubmit = async (data: Budget) => {
     setIsSubmitting(true);
@@ -86,6 +96,7 @@ const BudgetForm = ({
                     placeholder="50.00"
                     aria-label="Amount"
                     className="pl-7"
+                    disabled={isDisabled}
                     {...field}
                   />
                 </div>
@@ -94,7 +105,11 @@ const BudgetForm = ({
             </FormItem>
           )}
         />
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
+        <Button
+          type="submit"
+          className="w-full"
+          disabled={isSubmitting || isDisabled}
+        >
           {isSubmitting ? "Submitting..." : "Submit"}
         </Button>
       </form>

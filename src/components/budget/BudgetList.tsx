@@ -65,7 +65,7 @@ const BudgetList = ({ onEdit }: { onEdit: (budget: Budget) => void }) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+    <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
       {defaults.map((budget) => {
         const categoryData = categories.find(
           (category) => category.name === budget.category
@@ -84,10 +84,6 @@ const BudgetList = ({ onEdit }: { onEdit: (budget: Budget) => void }) => {
             onEdit={onEdit}
             icon={categoryData.icon}
             color={categoryData.color}
-            noEdit={
-              categoryData.name === "luxury" ||
-              categoryData.name === "utilities"
-            }
           />
         );
       })}

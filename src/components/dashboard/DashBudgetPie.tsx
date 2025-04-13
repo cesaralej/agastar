@@ -30,10 +30,10 @@ interface BudgetPieProps {
 }
 
 const DashBudgetPie = ({ budget, spent, icon, color }: BudgetPieProps) => {
-  const remaining = budget.amount - spent;
+  const remaining = Number(budget.amount) - spent;
   const percentageUsed =
-    budget.amount > 0
-      ? Math.min(Math.round((spent / budget.amount) * 100), 100)
+    Number(budget.amount) > 0
+      ? Math.min(Math.round((spent / Number(budget.amount)) * 100), 100)
       : 0;
 
   const chartData = [{ item: "spent", amount: percentageUsed, fill: color }];
