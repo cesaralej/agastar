@@ -35,7 +35,7 @@ export interface Budget {
   category: string;
   month: number;
   year: number;
-  amount: number;
+  amount: string;
   lastUpdated?: Date | FieldValue;
 }
 

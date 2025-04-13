@@ -85,6 +85,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
       const budgetRef = doc(db, "users", user.uid, "budgets", budget.id);
       await setDoc(budgetRef, {
         ...budget,
+        amount: Number(budget.amount),
         lastUpdated: serverTimestamp(),
       });
       console.info("Budget updated with ID: ", budget.id);
@@ -112,7 +113,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
         (budget) =>
           budget.category !== "luxury" && budget.category !== "utilities"
       )
-      .reduce((acc, budget) => acc + budget.amount, 0);
+      .reduce((acc, budget) => acc + Number(budget.amount), 0);
   };
 
   const value = {

@@ -7,9 +7,8 @@ import { useRecurrings } from "@/context/RecurringContext";
 import { useDate } from "@/context/DateContext";
 import Spinner from "@/components/Spinner";
 
-const BudgetList = () => {
-  const { loading, error, updateBudget, getSumOfBudgets, filterBudgets } =
-    useBudgets();
+const BudgetList = ({ onEdit }: { onEdit: (budget: Budget) => void }) => {
+  const { loading, error, getSumOfBudgets, filterBudgets } = useBudgets();
   const { calculateIncomeForMonth, spentPerYearMonthCategory } =
     useTransactions();
   const { totalRecurring } = useRecurrings();
@@ -28,7 +27,7 @@ const BudgetList = () => {
         return {
           id: `${category.name}-${selectedMonth}-${selectedYear}`,
           category: category.name,
-          amount: amount < 0 ? 0 : amount,
+          amount: (amount < 0 ? 0 : amount).toString(),
           month: selectedMonth,
           year: selectedYear,
         };
@@ -36,7 +35,7 @@ const BudgetList = () => {
         return {
           id: `${category.name}-${selectedMonth}-${selectedYear}`,
           category: category.name,
-          amount: totalRecurring,
+          amount: totalRecurring.toString(),
           month: selectedMonth,
           year: selectedYear,
         };
@@ -50,21 +49,12 @@ const BudgetList = () => {
         existingBudget || {
           id: `${category.name}-${selectedMonth}-${selectedYear}`,
           category: category.name,
-          amount: 0,
+          amount: "0",
           month: selectedMonth,
           year: selectedYear,
         }
       );
     });
-
-  const handleBudgetChange = async (updatedBudget: Budget) => {
-    await updateBudget(updatedBudget);
-    defaults.forEach((budget) => {
-      if (budget.category === updatedBudget.category) {
-        budget.amount = updatedBudget.amount;
-      }
-    });
-  };
 
   if (loading) {
     return <Spinner loading={loading} />;
@@ -91,7 +81,7 @@ const BudgetList = () => {
                 budget.category
               ] || 0
             }
-            onChange={handleBudgetChange}
+            onEdit={onEdit}
             icon={categoryData.icon}
             color={categoryData.color}
             noEdit={
