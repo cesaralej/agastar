@@ -88,6 +88,11 @@ export const RecurringProvider: React.FC<{ children: React.ReactNode }> = ({
       return;
     }
 
+    const updatedData = {
+      ...recurringData,
+      amount: Number(recurringData.amount),
+    };
+
     try {
       const recurringsCollectionRef = collection(
         db,
@@ -97,7 +102,7 @@ export const RecurringProvider: React.FC<{ children: React.ReactNode }> = ({
       );
 
       const docRef = await addDoc(recurringsCollectionRef, {
-        ...recurringData,
+        ...updatedData,
       });
       console.log("Document written with ID: ", docRef.id);
     } catch (error) {
@@ -114,6 +119,10 @@ export const RecurringProvider: React.FC<{ children: React.ReactNode }> = ({
       console.error("User not logged in. Cannot update recurring.");
       return;
     }
+    const updatedData = {
+      ...updatedRecurringData,
+      amount: Number(updatedRecurringData.amount),
+    };
 
     try {
       const recurringDocRef = doc(
@@ -123,7 +132,7 @@ export const RecurringProvider: React.FC<{ children: React.ReactNode }> = ({
         "recurrings",
         recurringId
       ); // Get doc reference
-      await updateDoc(recurringDocRef, updatedRecurringData); // Update the document
+      await updateDoc(recurringDocRef, updatedData); // Update the document
       console.log("Recurring updated with ID: ", recurringId);
     } catch (error) {
       console.error("Error updating recurring:", error);

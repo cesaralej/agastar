@@ -3,9 +3,11 @@ import {
   DrawerContent,
   DrawerHeader,
   DrawerTitle,
+  DrawerFooter,
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import RecurringForm from "@/components/recurring/RecurringForm";
+import { useRecurrings } from "@/context/RecurringContext";
 
 import { Recurring, RecurringData } from "@/types";
 
@@ -24,6 +26,17 @@ const RecurringDrawer = ({
   onAdd: (recurring: RecurringData) => Promise<void>;
   onEdit: (recurringId: string, recurring: RecurringData) => Promise<void>;
 }) => {
+  const { deleteRecurring } = useRecurrings();
+
+  const handleDelete = (recurringId: string) => {
+    if (
+      window.confirm("Are you sure you want to delete this recurring item?")
+    ) {
+      deleteRecurring(recurringId);
+      setShowSheet(false);
+    }
+  };
+
   return (
     <Drawer open={showSheet} onOpenChange={setShowSheet}>
       <DrawerContent>
@@ -33,7 +46,7 @@ const RecurringDrawer = ({
           </DrawerTitle>
         </DrawerHeader>
         <ScrollArea className="overflow-y-auto">
-          <div className="p-6">
+          <div className={`pt-6 px-6 ${isEdit ? "pb-0" : "pb-6"}`}>
             <RecurringForm
               setShowSheet={setShowSheet}
               initialData={initialData}
@@ -43,6 +56,20 @@ const RecurringDrawer = ({
             />
           </div>
         </ScrollArea>
+        {isEdit && (
+          <DrawerFooter className="px-6 pb-6">
+            <button
+              onClick={() => {
+                if (initialData?.id) {
+                  handleDelete(initialData?.id);
+                }
+              }}
+              className="bg-red-500 text-white text-sm py-2 rounded-md hover:bg-red-600 transition duration-200"
+            >
+              Delete
+            </button>
+          </DrawerFooter>
+        )}
       </DrawerContent>
     </Drawer>
   );

@@ -10,13 +10,8 @@ import {
   FormControl,
   FormItem,
 } from "@/components/ui/form";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { FaCreditCard, FaWallet } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 
@@ -46,29 +41,26 @@ const NewRecurring = ({
   const form = useForm<RecurringData>({
     resolver: zodResolver(schema),
     defaultValues: {
-      amount: initialData?.amount || 0,
+      amount: initialData?.amount || "",
       description: initialData?.description || "",
       account: initialData?.account || "savings",
       dueDate: initialData?.dueDate || 1,
     },
   });
 
-  if (initialData) {
-    console.log("Initial data:", initialData);
-  }
-
   const handleSubmit = (data: RecurringData) => {
     setIsSubmitting(true);
+    console.log("Editing recurring:", data);
 
     if (isEdit) {
-      console.log("Editing recurring:", data);
+      //console.log("Editing recurring:", updatedData);
       if (initialData?.id) {
         onEdit(initialData.id, data);
       } else {
         console.error("No recurring ID found for editing");
       }
     } else {
-      console.log("Adding new recurring:", data);
+      //console.log("Adding new recurring:", updatedData);
       onAdd(data);
     }
     setShowSheet(false);
@@ -86,13 +78,21 @@ const NewRecurring = ({
             <FormItem>
               <FormLabel>Amount</FormLabel>
               <FormControl>
-                <Input
-                  type="number"
-                  inputMode="decimal"
-                  placeholder="50"
-                  aria-label="Amount"
-                  {...field}
-                />
+                <div className="relative">
+                  {" "}
+                  {/* Container for prefix and input */}
+                  <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3 text-gray-500">
+                    €
+                  </div>
+                  <Input
+                    type="text"
+                    inputMode="decimal"
+                    placeholder="50.00"
+                    aria-label="Amount"
+                    className="pl-7"
+                    {...field}
+                  />
+                </div>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -122,20 +122,36 @@ const NewRecurring = ({
           render={({ field }) => (
             <FormItem>
               <FormLabel>Account</FormLabel>
-              <Select onValueChange={field.onChange} value={field.value}>
-                <FormControl>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select the account used" />
-                  </SelectTrigger>
-                </FormControl>
-                <SelectContent>
-                  {ACCOUNTS.map((account) => (
-                    <SelectItem key={account} value={account}>
-                      {account.charAt(0).toUpperCase() + account.slice(1)}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+              <FormControl>
+                <div className="w-full">
+                  <ToggleGroup
+                    type="single"
+                    variant="outline"
+                    value={field.value}
+                    onValueChange={(value) => {
+                      if (value) field.onChange(value);
+                    }}
+                    className="inline-flex"
+                  >
+                    <ToggleGroupItem
+                      value={ACCOUNTS[1]}
+                      aria-label="Toggle expense"
+                    >
+                      <FaWallet className="text-yellow-600" />
+                      {ACCOUNTS[1].charAt(0).toUpperCase() +
+                        ACCOUNTS[1].slice(1)}{" "}
+                    </ToggleGroupItem>
+                    <ToggleGroupItem
+                      value={ACCOUNTS[0]}
+                      aria-label="Toggle income"
+                    >
+                      <FaCreditCard className="text-indigo-600" />
+                      {ACCOUNTS[0].charAt(0).toUpperCase() +
+                        ACCOUNTS[0].slice(1)}{" "}
+                    </ToggleGroupItem>
+                  </ToggleGroup>
+                </div>
+              </FormControl>
               <FormMessage />
             </FormItem>
           )}
@@ -148,7 +164,7 @@ const NewRecurring = ({
               <FormLabel>Due Date</FormLabel>
               <FormControl>
                 <Input
-                  type="number"
+                  type="string"
                   inputMode="numeric"
                   placeholder="1"
                   aria-label="Due Date"
