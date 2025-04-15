@@ -7,6 +7,8 @@ import { useRecurrings } from "@/context/RecurringContext";
 import { useDate } from "@/context/DateContext";
 import Spinner from "@/components/Spinner";
 
+import { Card } from "@/components/ui/card";
+
 const BudgetList = ({ onEdit }: { onEdit: (budget: Budget) => void }) => {
   const { loading, error, getSumOfBudgets, filterBudgets } = useBudgets();
   const { calculateIncomeForMonth, spentPerYearMonthCategory } =
@@ -87,6 +89,11 @@ const BudgetList = ({ onEdit }: { onEdit: (budget: Budget) => void }) => {
           />
         );
       })}
+      <Card className="cursor-pointer hover:shadow-lg transition-shadow duration-200 ease-in-out bg-gray-200">
+        <div className="flex justify-center items-center h-full p-4">
+          <span className="text-white text-6xl font-bold">+</span>
+        </div>
+      </Card>
     </div>
   );
 };

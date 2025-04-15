@@ -11,6 +11,7 @@ import {
   FormLabel,
   FormMessage,
   FormControl,
+  FormDescription,
   FormItem,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
@@ -33,7 +34,7 @@ const BudgetForm = ({
   setShowSheet: (show: boolean) => void;
   initialData?: Partial<Budget> | null;
 }) => {
-  const { updateBudget } = useBudgets();
+  const { updateBudget, previousBudgets } = useBudgets();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isDisabled, setIsDisabled] = useState(false);
   const form = useForm<Budget>({
@@ -42,6 +43,15 @@ const BudgetForm = ({
       amount: initialData?.amount?.toString() || "",
     },
   });
+
+  const previousBudget = previousBudgets(
+    initialData?.month || 0,
+    initialData?.year || 0,
+    initialData?.category || ""
+  );
+  const previousBudgetAmount = previousBudget[0]?.amount
+    ? `€ ${previousBudget[0].amount}`
+    : "None";
 
   useEffect(() => {
     if (
@@ -101,6 +111,10 @@ const BudgetForm = ({
                   />
                 </div>
               </FormControl>
+              <FormDescription>
+                Previous Budget:{" "}
+                <span className="font-semibold">{previousBudgetAmount}</span>
+              </FormDescription>
               <FormMessage />
             </FormItem>
           )}

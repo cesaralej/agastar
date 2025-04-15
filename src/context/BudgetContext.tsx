@@ -20,8 +20,11 @@ interface BudgetContextType {
   error: FirestoreError | null;
   updateBudget: (budget: Budget) => Promise<void>;
   filterBudgets: (month?: number, year?: number) => Budget[];
+  previousBudgets: (month: number, year: number, category: string) => Budget[];
   getSumOfBudgets: (month?: number, year?: number) => number;
 }
+
+// Why am I using the question marks above? Should those not be optional?
 
 const BudgetContext = createContext<BudgetContextType | null>(null);
 
@@ -102,13 +105,29 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
     });
   };
 
+  const previousBudgets = (month: number, year: number, category: string) => {
+    let prevMonth = month - 1;
+    let prevYear = year;
+
+    if (prevMonth < 0) {
+      // Handle January -> December wrap-around
+      prevMonth = 11; // December
+      prevYear = year - 1;
+    }
+
+    return budgets.filter((budget) => {
+      return (
+        budget.month === prevMonth &&
+        budget.year === prevYear &&
+        budget.category === category
+      );
+    });
+  };
+
   const getSumOfBudgets = (month?: number, year?: number) => {
-    return budgets
-      .filter((budget) => {
-        const matchesMonth = month == null || budget.month === month;
-        const matchesYear = year == null || budget.year === year;
-        return matchesMonth && matchesYear;
-      })
+    const filteredByDate = filterBudgets(month, year);
+
+    return filteredByDate
       .filter(
         (budget) =>
           budget.category !== "luxury" && budget.category !== "utilities"
@@ -122,6 +141,7 @@ export const BudgetProvider: React.FC<{ children: React.ReactNode }> = ({
     error,
     updateBudget,
     filterBudgets,
+    previousBudgets,
     getSumOfBudgets,
   };
 

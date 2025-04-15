@@ -53,7 +53,7 @@ const BudgetItem = ({
   };
 
   const getProgressBarColor = (percentage: number) => {
-    return percentage < 75 ? "#22C55E" : "#EF4444";
+    return percentage < 75 ? "#86EFAC" : "#FCA5A5";
   };
 
   const getRemainingColor = (remaining: number) => {
@@ -78,23 +78,20 @@ const BudgetItem = ({
       >
         <div className="flex justify-between items-center">
           <div className="relative">
-            <ChartContainer
-              config={chartConfig}
-              className="mx-auto aspect-square w-24 h-24"
-            >
+            <ChartContainer config={chartConfig} className="mx-auto w-20 h-24">
               <RadialBarChart
                 data={chartData}
                 startAngle={90}
                 endAngle={percentageUsed * 3.6 + 90}
-                innerRadius={30}
-                outerRadius={60}
+                innerRadius={20}
+                outerRadius={50}
               >
                 <PolarGrid
                   gridType="circle"
                   radialLines={false}
                   stroke="none"
                   className="first:fill-muted last:fill-background"
-                  polarRadius={[36, 24]}
+                  polarRadius={[26, 14]}
                 />
                 <RadialBar dataKey="amount" background />
                 <PolarRadiusAxis
@@ -105,14 +102,14 @@ const BudgetItem = ({
               </RadialBarChart>
             </ChartContainer>
             <div
-              className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-16 h-16 rounded-full text-lg ${color}`}
+              className={`absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center justify-center w-10 h-10 rounded-full text-lg ${color}`}
             >
               {icon}
             </div>
           </div>
           <div className="flex-1 pr-4">
             <div className="flex justify-between items-center">
-              <h3 className="text-lg font-bold">
+              <h3 className=" font-bold">
                 {budget.category.charAt(0).toUpperCase() +
                   budget.category.slice(1)}
               </h3>
