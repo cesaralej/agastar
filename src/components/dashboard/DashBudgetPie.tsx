@@ -8,7 +8,7 @@ import {
   RadialBarChart,
 } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-
+import { formatCurrency } from "@/lib/utils";
 import { Budget } from "@/types";
 
 const chartConfig = {
@@ -25,8 +25,8 @@ const chartConfig = {
 interface BudgetPieProps {
   budget: Budget;
   spent: number;
-  icon: ReactNode; // Type the icon prop
-  color: string; // Type the color prop
+  icon: ReactNode;
+  color: string;
 }
 
 const DashBudgetPie = ({ budget, spent, icon, color }: BudgetPieProps) => {
@@ -87,7 +87,7 @@ const DashBudgetPie = ({ budget, spent, icon, color }: BudgetPieProps) => {
                 budget.category.slice(1)}
             </h3>
             <p className={`text-lg font-bold ${getRemainingColor(remaining)}`}>
-              {remaining}€
+              {formatCurrency(remaining)}
             </p>
           </div>
         </div>

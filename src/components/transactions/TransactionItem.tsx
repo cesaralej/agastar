@@ -5,6 +5,7 @@ import { Category } from "@/types";
 import { HiPlusSm, HiMinusSm, HiPencil, HiTrash } from "react-icons/hi";
 import { FaCreditCard, FaWallet, FaCoins } from "react-icons/fa";
 import { toast } from "sonner";
+import { formatCurrency } from "@/lib/utils";
 
 import { Transaction } from "@/types";
 
@@ -103,7 +104,7 @@ const TransactionItem = ({
                 <span
                   className={`text-lg font-semibold ${amountStyle} block text-right`}
                 >
-                  {transaction.amount}€
+                  {formatCurrency(Number(transaction.amount))}
                 </span>
               </div>
               <div className="relative h-6">

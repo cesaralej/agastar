@@ -5,11 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Spinner from "@/components/Spinner";
 import { FaReceipt, FaEquals } from "react-icons/fa";
 import { Transaction } from "@/types";
-
-const formatNumberWithCommas = (number: number | undefined): string => {
-  if (number === undefined) return "0";
-  return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
+import { formatCurrency } from "@/lib/utils";
 
 const Balance = () => {
   const { transactions, loading, error } = useTransactions();
@@ -99,7 +95,7 @@ const Balance = () => {
           <div className="ml-4">
             <div className="text-gray-700">Expenses</div>
             <div className={`text-xl font-bold text-blue-500`}>
-              {formatNumberWithCommas(summary.totalExpenses)}€
+              {formatCurrency(summary.totalExpenses)}
             </div>
           </div>
         </div>
@@ -120,7 +116,7 @@ const Balance = () => {
                 summary.balance >= 0 ? "text-green-600" : "text-red-600"
               }`}
             >
-              {formatNumberWithCommas(summary.balance)}€
+              {formatCurrency(summary.balance)}
             </div>
           </div>
         </div>

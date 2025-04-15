@@ -8,6 +8,7 @@ import {
   RadialBarChart,
 } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
+import { formatCurrency } from "@/lib/utils";
 
 const chartConfig = {
   spent: {
@@ -28,12 +29,6 @@ interface BudgetItemProps {
   noEdit?: boolean;
   onEdit: (budget: Budget) => void;
 }
-
-const formatNumberWithCommas = (number: number | undefined): string => {
-  if (number === undefined) return "0";
-  if (isNaN(number)) return "0";
-  return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
 
 const BudgetItem = ({
   budget,
@@ -71,10 +66,9 @@ const BudgetItem = ({
   return (
     <Card className="cursor-pointer hover:shadow-lg transition-shadow duration-200 ease-in-out">
       <button
-        className=""
         onClick={onEditClick}
         aria-label={`Edit budget for ${budget.category}`}
-        style={{ border: "none", background: "transparent", textAlign: "left" }}
+        className="border-none bg-transparent text-left w-full h-full p-0 block"
       >
         <div className="flex justify-between items-center">
           <div className="relative">
@@ -116,11 +110,9 @@ const BudgetItem = ({
             </div>
             <div>
               <div>
-                <p className="">
-                  {formatNumberWithCommas(Number(budget.amount))}€
-                </p>
+                <p className="">{formatCurrency(Number(budget.amount))}</p>
                 <p className={`text-sm ${getRemainingColor(remaining)}`}>
-                  Left: {formatNumberWithCommas(remaining)}€
+                  Left: {formatCurrency(remaining)}
                 </p>
               </div>
             </div>

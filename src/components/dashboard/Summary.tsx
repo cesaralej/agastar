@@ -5,11 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaWallet, FaCreditCard } from "react-icons/fa";
 import { Transaction } from "@/types";
 import Spinner from "@/components/Spinner";
-
-const formatNumberWithCommas = (number: number | undefined): string => {
-  if (number === undefined) return "0";
-  return number.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-};
+import { formatCurrency } from "@/lib/utils";
 
 const Summary = () => {
   const { transactions, loading, error } = useTransactions();
@@ -74,7 +70,7 @@ const Summary = () => {
           <div className="ml-4">
             <div className="text-gray-700">Savings</div>
             <div className={`text-xl font-bold text-yellow-600`}>
-              {formatNumberWithCommas(summary.savings)}€
+              {formatCurrency(summary.savings)}
             </div>
           </div>
         </div>
@@ -87,7 +83,7 @@ const Summary = () => {
           <div className="ml-4">
             <div className="text-gray-700">Credit</div>
             <div className={`text-xl font-bold text-indigo-600`}>
-              {formatNumberWithCommas(summary.credit)}€
+              {formatCurrency(summary.credit)}
             </div>
           </div>
         </div>
