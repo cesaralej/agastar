@@ -234,10 +234,10 @@ const TransactionForm = ({
                     <div className="w-full">
                       <ToggleGroup
                         type="single"
-                        variant="outline" // Or default
+                        variant="outline"
                         value={field.value}
                         onValueChange={(value) => {
-                          if (value) field.onChange(value); // Prevent unselecting
+                          if (value) field.onChange(value);
                         }}
                         disabled={isCreditCardPayment}
                         className="inline-flex"
@@ -246,15 +246,16 @@ const TransactionForm = ({
                           value={TYPES[1]}
                           aria-label="Toggle expense"
                         >
+                          <LuArrowLeftRight className="inline-block text-blue-500" />
                           {TYPES[1].charAt(0).toUpperCase() + TYPES[1].slice(1)}{" "}
-                          <LuArrowLeftRight className="inline-block mr-1 text-blue-500" />
                         </ToggleGroupItem>
                         <ToggleGroupItem
                           value={TYPES[0]}
                           aria-label="Toggle income"
                         >
-                          {TYPES[0].charAt(0).toUpperCase() + TYPES[0].slice(1)}{" "}
-                          <LuArrowUp className="inline-block mr-1 text-green-500" />
+                          <LuArrowUp className="inline-block text-green-500" />
+                          {TYPES[0].charAt(0).toUpperCase() +
+                            TYPES[0].slice(1)}{" "}
                         </ToggleGroupItem>
                       </ToggleGroup>
                     </div>
@@ -273,10 +274,10 @@ const TransactionForm = ({
                     <div className="w-full">
                       <ToggleGroup
                         type="single"
-                        variant="outline" // Or default
+                        variant="outline"
                         value={field.value}
                         onValueChange={(value) => {
-                          if (value) field.onChange(value); // Prevent unselecting
+                          if (value) field.onChange(value);
                         }}
                         disabled={isCreditCardPayment}
                         className="inline-flex"
@@ -285,17 +286,17 @@ const TransactionForm = ({
                           value={ACCOUNTS[1]}
                           aria-label="Toggle expense"
                         >
+                          <FaWallet className="text-yellow-600" />
                           {ACCOUNTS[1].charAt(0).toUpperCase() +
                             ACCOUNTS[1].slice(1)}{" "}
-                          <FaWallet className="text-yellow-600" />
                         </ToggleGroupItem>
                         <ToggleGroupItem
                           value={ACCOUNTS[0]}
                           aria-label="Toggle income"
                         >
+                          <FaCreditCard className="text-indigo-600" />
                           {ACCOUNTS[0].charAt(0).toUpperCase() +
                             ACCOUNTS[0].slice(1)}{" "}
-                          <FaCreditCard className="text-indigo-600" />
                         </ToggleGroupItem>
                       </ToggleGroup>
                     </div>
