@@ -41,7 +41,7 @@ export interface Budget {
 
 export interface RecurringData {
   description: string;
-  amount: number;
+  amount: string;
   dueDate: number;
   account: AccountType;
   lastPaymentDate?: Date;
