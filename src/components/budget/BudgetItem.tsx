@@ -9,6 +9,7 @@ import {
 } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { formatCurrency } from "@/lib/utils";
+import { useRouter } from "next/navigation";
 
 const chartConfig = {
   spent: {
@@ -37,6 +38,7 @@ const BudgetItem = ({
   color,
   onEdit,
 }: BudgetItemProps) => {
+  const router = useRouter();
   const remaining = Number(budget.amount) - spent;
   const percentageUsed =
     Number(budget.amount) > 0
@@ -66,7 +68,13 @@ const BudgetItem = ({
   return (
     <Card className="cursor-pointer hover:shadow-lg transition-shadow duration-200 ease-in-out">
       <button
-        onClick={onEditClick}
+        onClick={() => {
+          if (budget.category === "utilities") {
+            router.push("/recurring");
+          } else {
+            onEditClick();
+          }
+        }}
         aria-label={`Edit budget for ${budget.category}`}
         className="border-none bg-transparent text-left w-full h-full p-0 block"
       >
