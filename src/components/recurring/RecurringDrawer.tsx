@@ -7,9 +7,9 @@ import {
   DrawerFooter,
 } from "@/components/ui/drawer";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Button } from "@/components/ui/button"; // Use Shadcn Button
+import { Button } from "@/components/ui/button";
 import RecurringForm from "@/components/recurring/RecurringForm";
-import TransactionForm from "@/components/transactions/TransactionForm"; // Assuming path
+import TransactionForm from "@/components/transactions/TransactionForm";
 import { useRecurrings } from "@/context/RecurringContext";
 import { useTransactions } from "@/context/TransactionContext";
 import {
@@ -17,32 +17,28 @@ import {
   RecurringData,
   Transaction,
   TransactionData,
-} from "@/types"; // Ensure TransactionData is imported/defined
+} from "@/types";
 
-// Define props more explicitly, adding addTransaction
 interface RecurringDrawerProps {
   isEdit?: boolean;
   showSheet: boolean;
   setShowSheet: (show: boolean) => void;
   initialData?: Partial<Recurring> | null;
-  onAddRecurring: (recurring: RecurringData) => Promise<void>; // Renamed for clarity
+  onAddRecurring: (recurring: RecurringData) => Promise<void>;
   onEditRecurring: (
     recurringId: string,
     recurring: RecurringData
-  ) => Promise<void>; // Renamed for clarity
-  // TODO: Add prop for fetching payment history for the specific recurring item
-  // paymentHistory?: Transaction[];
+  ) => Promise<void>;
 }
 
 const RecurringDrawer = ({
-  isEdit = false, // Default to false
+  isEdit = false,
   showSheet,
   setShowSheet,
   initialData,
   onAddRecurring,
   onEditRecurring,
-}: // paymentHistory = [], // TODO: Use payment history prop later
-RecurringDrawerProps) => {
+}: RecurringDrawerProps) => {
   const { deleteRecurring } = useRecurrings();
   const { getRecentPaymentsForRecurring } = useTransactions();
   const [paymentHistory, setPaymentHistory] = useState<Transaction[]>([]);
@@ -52,7 +48,6 @@ RecurringDrawerProps) => {
 
   useEffect(() => {
     if (mode === "view" && initialData) {
-      // Type assertion might be needed if initialData is Partial<Recurring>
       const history = getRecentPaymentsForRecurring(initialData as Recurring);
       setPaymentHistory(history);
     }
@@ -104,7 +99,7 @@ RecurringDrawerProps) => {
       case "edit":
         return "Edit Recurring Item";
       case "pay":
-        return "Record Payment";
+        return "Add New Payment";
       default:
         return "";
     }
@@ -115,11 +110,9 @@ RecurringDrawerProps) => {
       <DrawerContent className="max-h-[90vh]">
         {" "}
         <DrawerHeader className="text-left">
-          {initialData?.description && (
-            <DrawerTitle>
-              {getDrawerTitle(initialData?.description)}
-            </DrawerTitle>
-          )}
+          <DrawerTitle>
+            {getDrawerTitle(initialData?.description || "")}
+          </DrawerTitle>
         </DrawerHeader>
         {/* Scrollable content area */}
         <ScrollArea className="overflow-y-auto px-4">
@@ -195,7 +188,7 @@ RecurringDrawerProps) => {
                 {/* --- Action Buttons --- */}
                 <div className="flex flex-col sm:flex-row gap-3 pt-4">
                   <Button onClick={() => setMode("pay")} className="flex-1">
-                    Record Payment
+                    Add New Payment
                   </Button>
                   <Button
                     onClick={() => setMode("edit")}
@@ -210,7 +203,7 @@ RecurringDrawerProps) => {
                     onClick={handleDelete}
                     className="w-full" // Make it full width
                   >
-                    Delete Recurring Item
+                    Delete Item
                   </Button>
                 </div>
 

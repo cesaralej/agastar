@@ -45,7 +45,6 @@ const RecurringPage = () => {
 
   const handleDrawerClose = () => {
     setShowSheet(false);
-    setEditData(null);
   };
 
   return (
