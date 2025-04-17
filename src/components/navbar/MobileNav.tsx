@@ -1,6 +1,7 @@
 import {
   Sheet,
   SheetContent,
+  SheetTitle,
   SheetTrigger,
   SheetClose,
 } from "@/components/ui/sheet";
@@ -53,6 +54,7 @@ const MobileNav = () => {
         </svg>
       </SheetTrigger>
       <SheetContent>
+        <SheetTitle className="sr-only">menu</SheetTitle>
         <nav className="flex flex-col pt-4">
           {links.map((link) => (
             <SheetClose asChild key={link.label}>

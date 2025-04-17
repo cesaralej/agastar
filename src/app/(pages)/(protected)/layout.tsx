@@ -12,8 +12,6 @@ export default function DashboardLayout({ children }: DashboardLayoutProps) {
   const currentUser = useUser();
   const router = useRouter();
 
-  console.log("ML Render");
-
   useEffect(() => {
     if (currentUser === null) {
       router.push("/auth");

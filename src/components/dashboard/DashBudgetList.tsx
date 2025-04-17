@@ -82,19 +82,17 @@ const DashBudgetList = () => {
             ) as Category;
 
             return (
-              <>
-                <DashBudgetPie
-                  key={budget.id || `${budget.category}`}
-                  budget={budget}
-                  spent={
-                    spentPerYearMonthCategory[selectedYear]?.[selectedMonth]?.[
-                      budget.category
-                    ] || 0
-                  }
-                  icon={categoryData.icon}
-                  color={categoryData.hexColor}
-                />
-              </>
+              <DashBudgetPie
+                key={budget.id || categoryData.name}
+                budget={budget}
+                spent={
+                  spentPerYearMonthCategory[selectedYear]?.[selectedMonth]?.[
+                    budget.category
+                  ] || 0
+                }
+                icon={categoryData.icon}
+                color={categoryData.hexColor}
+              />
             );
           })}
         </div>

@@ -124,14 +124,14 @@ const TransactionForm = ({
       : categories.filter((category) => category.name !== "salary");
 
   useEffect(() => {
-    if (type === "income") {
-      form.setValue("account", "savings"); // Set account to "savings"
-      form.setValue("category", "salary"); // Set category to "salary"
-    } else if (type === "expense" && !isEdit) {
-      form.setValue("account", "credit"); // Reset to default for "expense"
-      form.setValue("category", "luxury"); // Reset to default for "expense"
+    if (type === "income" && !initialData) {
+      form.setValue("account", "savings");
+      form.setValue("category", "salary");
+    } else if (type === "expense" && !initialData) {
+      form.setValue("account", "credit");
+      form.setValue("category", "luxury");
     }
-  }, [type, form, isEdit]);
+  }, [type, form, initialData]);
 
   const handleSubmit = async (data: TransactionData) => {
     setIsSubmitting(true);
