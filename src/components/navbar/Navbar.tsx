@@ -10,10 +10,8 @@ import Link from "next/link";
 
 const Navbar = () => {
   const [user, loading, error] = useAuthState(auth);
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  const toggleDropdown = () => setIsDropdownOpen(!isDropdownOpen);
   const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
 
   return (
@@ -38,8 +36,6 @@ const Navbar = () => {
             <div>Error: {error.message}</div> // Show error message
           ) : user ? (
             <UserMenu
-              isDropdownOpen={isDropdownOpen}
-              toggleDropdown={toggleDropdown}
               user={user} // Pass the user prop
             />
           ) : (
