@@ -1,31 +1,20 @@
 "use client";
-import { useState } from "react";
 import { useAuthState } from "react-firebase-hooks/auth";
 import { auth } from "@/lib/firebase";
 import UserMenu from "./UserMenu";
 import NavbarLinks from "./NavbarLinks";
-import MobileMenuToggle from "./MobileMenuToggle";
-import { FaShuttleSpace } from "react-icons/fa6";
+import MobileNav from "./MobileNav";
+import Brand from "./Brand";
 import Link from "next/link";
 
 const Navbar = () => {
   const [user, loading, error] = useAuthState(auth);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const toggleMobileMenu = () => setIsMobileMenuOpen(!isMobileMenuOpen);
-
   return (
-    <nav className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-md">
-      <div className="max-w-screen-xl mx-auto p-4 flex justify-between items-center">
+    <header className="sticky top-0 z-30 w-full bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-md">
+      <div className="p-4 flex justify-between items-center">
         {/* Logo and Brand */}
-        <Link href="/">
-          <div className="flex items-center space-x-3">
-            <FaShuttleSpace className="h-8 w-8 text-purple-600 transform rotate-[-50deg]" />
-            <span className="text-2xl font-semibold text-gray-900 dark:text-white">
-              Agastar
-            </span>
-          </div>
-        </Link>
+        <Brand />
+
         {/* Navbar Links for Desktop */}
         {user && <NavbarLinks />}
         {/* User Menu / Sign In Button */}
@@ -44,20 +33,11 @@ const Navbar = () => {
             </Link>
           )}
 
-          {user && (
-            <MobileMenuToggle
-              isMobileMenuOpen={isMobileMenuOpen}
-              toggleMobileMenu={toggleMobileMenu}
-            />
-          )}
+          {/* Mobile Menu */}
+          {user && <MobileNav />}
         </div>
       </div>
-
-      {/* Mobile Menu */}
-      {user && isMobileMenuOpen && (
-        <NavbarLinks isMobile onCloseMobileMenu={toggleMobileMenu} />
-      )}
-    </nav>
+    </header>
   );
 };
 
