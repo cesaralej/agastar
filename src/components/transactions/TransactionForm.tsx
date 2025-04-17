@@ -98,12 +98,6 @@ const TransactionForm = ({
     },
   });
 
-  // TODO probar esto o quitarlo si no funciona
-  const { setFocus } = useForm<TransactionData>();
-  useEffect(() => {
-    setFocus("amount");
-  }, [setFocus]);
-
   const isCreditCardPayment = form.watch("isCreditCardPayment");
 
   useEffect(() => {
