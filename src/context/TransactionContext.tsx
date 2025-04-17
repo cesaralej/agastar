@@ -14,7 +14,7 @@ import {
 } from "firebase/firestore";
 import { auth, db } from "../lib/firebase";
 import { useAuthState } from "react-firebase-hooks/auth";
-import { Transaction, TransactionData } from "@/types";
+import { Transaction, TransactionData, Recurring } from "@/types";
 import { useRecurrings } from "./RecurringContext";
 
 export interface TransactionContextType {
@@ -36,6 +36,7 @@ export interface TransactionContextType {
     number,
     Record<number, Record<string, number>>
   >;
+  getRecentPaymentsForRecurring: (recurringItem: Recurring) => Transaction[];
 }
 
 const TransactionContext = createContext<TransactionContextType | null>(null);
@@ -296,6 +297,36 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     return result;
   };
 
+  const getRecentPaymentsForRecurring = (
+    recurringItem: Recurring
+  ): Transaction[] => {
+    // Basic validation on input
+    if (!recurringItem || !recurringItem.description) {
+      console.warn(
+        "Cannot get payments: Recurring item is missing description or category."
+      );
+      return [];
+    }
+
+    // Filter transactions based on matching criteria and ensure date exists for sorting
+    const matchingPayments = transactions.filter(
+      (tx) =>
+        tx.description === recurringItem.description &&
+        tx.category === "utilities" &&
+        tx.type === "expense" && // Make sure it's classified as an expense payment
+        tx.date != null // Ensure date exists for reliable sorting
+    );
+
+    // Sort the matching payments by date in descending order (most recent first)
+    const sortedPayments = matchingPayments.sort((a, b) => {
+      // We already filtered out null dates, so direct comparison is safer
+      return b.date!.getTime() - a.date!.getTime();
+    });
+
+    // Return the top 3 most recent payments
+    return sortedPayments.slice(0, 3);
+  };
+
   const value = {
     transactions,
     loading,
@@ -306,6 +337,7 @@ export const TransactionProvider: React.FC<{ children: React.ReactNode }> = ({
     calculateIncomeForMonth,
     spentPerYearMonthCategory,
     calculateSpentPerDay,
+    getRecentPaymentsForRecurring,
   };
 
   return (

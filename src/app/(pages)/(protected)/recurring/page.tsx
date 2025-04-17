@@ -63,8 +63,8 @@ const RecurringPage = () => {
         showSheet={showSheet}
         setShowSheet={handleDrawerClose}
         initialData={editData}
-        onAdd={onAdd}
-        onEdit={onEdit}
+        onAddRecurring={onAdd}
+        onEditRecurring={onEdit}
       />
 
       <RecurringList onEdit={handleEdit} />
