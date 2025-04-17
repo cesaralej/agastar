@@ -1,13 +1,39 @@
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetContent,
+  SheetTrigger,
+  SheetClose,
+} from "@/components/ui/sheet";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
+const links = [
+  {
+    label: " Dashboard",
+    path: "/dashboard",
+  },
+  {
+    label: " Transactions",
+    path: "/transactions",
+  },
+  {
+    label: " Budget",
+    path: "/budget",
+  },
+  {
+    label: " Recurring",
+    path: "/recurring",
+  },
+];
+
+const navLinkStyle = "text-gray-900 dark:text-white py-2 px-3 rounded";
+
+const activeLinkStyle =
+  "text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900 py-2 px-3 rounded";
+
 const MobileNav = () => {
   const pathName = usePathname();
-  const navLinkStyle = "text-gray-900 dark:text-white py-2 px-3 rounded";
 
-  const activeLinkStyle =
-    "text-blue-700 dark:text-blue-300 bg-blue-100 dark:bg-blue-900 py-2 px-3 rounded";
   return (
     <Sheet>
       <SheetTrigger className="md:hidden dark:text-white text-2xl rounded-lg focus:outline-none text-gray-500">
@@ -28,44 +54,18 @@ const MobileNav = () => {
       </SheetTrigger>
       <SheetContent>
         <nav className="flex flex-col pt-4">
-          <Link
-            href="/dashboard"
-            className={
-              pathName == "/dashboard"
-                ? `${activeLinkStyle}`
-                : `${navLinkStyle}`
-            }
-          >
-            Dashboard
-          </Link>
-          <Link
-            href="/transactions"
-            className={
-              pathName == "/transactions"
-                ? `${activeLinkStyle}`
-                : `${navLinkStyle}`
-            }
-          >
-            Transactions
-          </Link>
-          <Link
-            href="/budget"
-            className={
-              pathName == "/budget" ? `${activeLinkStyle}` : `${navLinkStyle}`
-            }
-          >
-            Budget
-          </Link>
-          <Link
-            href="/recurring"
-            className={
-              pathName == "/recurring"
-                ? `${activeLinkStyle}`
-                : `${navLinkStyle}`
-            }
-          >
-            Recurring
-          </Link>
+          {links.map((link) => (
+            <SheetClose asChild key={link.label}>
+              <Link
+                href={link.path}
+                className={
+                  pathName === link.path ? activeLinkStyle : navLinkStyle
+                }
+              >
+                {link.label}
+              </Link>
+            </SheetClose>
+          ))}
         </nav>
       </SheetContent>
     </Sheet>
