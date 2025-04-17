@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { FaWallet, FaCreditCard } from "react-icons/fa";
 import { Transaction } from "@/types";
 import Spinner from "@/components/Spinner";
-import { formatCurrency } from "@/lib/utils";
+import CountUp from "react-countup";
 
 const Summary = () => {
   const { transactions, loading, error } = useTransactions();
@@ -70,7 +70,7 @@ const Summary = () => {
           <div className="ml-4">
             <div className="text-gray-700">Savings</div>
             <div className={`text-xl font-bold text-yellow-600`}>
-              {formatCurrency(summary.savings)}
+              <CountUp end={summary.savings} suffix="€" />
             </div>
           </div>
         </div>
@@ -83,7 +83,7 @@ const Summary = () => {
           <div className="ml-4">
             <div className="text-gray-700">Credit</div>
             <div className={`text-xl font-bold text-indigo-600`}>
-              {formatCurrency(summary.credit)}
+              <CountUp end={summary.credit} suffix="€" />
             </div>
           </div>
         </div>

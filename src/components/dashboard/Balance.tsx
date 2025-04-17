@@ -5,7 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Spinner from "@/components/Spinner";
 import { FaReceipt, FaEquals } from "react-icons/fa";
 import { Transaction } from "@/types";
-import { formatCurrency } from "@/lib/utils";
+import CountUp from "react-countup";
 
 const Balance = () => {
   const { transactions, loading, error } = useTransactions();
@@ -95,7 +95,7 @@ const Balance = () => {
           <div className="ml-4">
             <div className="text-gray-700">Expenses</div>
             <div className={`text-xl font-bold text-blue-500`}>
-              {formatCurrency(summary.totalExpenses)}
+              <CountUp end={summary.totalExpenses} suffix="€" />
             </div>
           </div>
         </div>
@@ -116,7 +116,7 @@ const Balance = () => {
                 summary.balance >= 0 ? "text-green-600" : "text-red-600"
               }`}
             >
-              {formatCurrency(summary.balance)}
+              <CountUp end={summary.balance} suffix="€" />
             </div>
           </div>
         </div>

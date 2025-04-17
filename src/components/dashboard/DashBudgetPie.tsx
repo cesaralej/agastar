@@ -1,6 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
+import CountUp from "react-countup";
 import {
   PolarGrid,
   PolarRadiusAxis,
@@ -8,7 +9,6 @@ import {
   RadialBarChart,
 } from "recharts";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { formatCurrency } from "@/lib/utils";
 import { Budget } from "@/types";
 
 const chartConfig = {
@@ -87,7 +87,7 @@ const DashBudgetPie = ({ budget, spent, icon, color }: BudgetPieProps) => {
                 budget.category.slice(1)}
             </h3>
             <p className={`text-lg font-bold ${getRemainingColor(remaining)}`}>
-              {formatCurrency(remaining)}
+              <CountUp end={remaining} suffix="€" />
             </p>
           </div>
         </div>
